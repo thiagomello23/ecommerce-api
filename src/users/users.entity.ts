@@ -7,12 +7,20 @@ export class Users {
     id: string;
 
     @Column()
-    name: string;
+    firstName: string;
+
+    @Column()
+    lastName: string;
 
     @Column({
         unique: true
     })
     email: string;
+
+    @Column({
+        unique: true
+    })
+    phoneNumber: string;
 
     @Column()
     password: string;

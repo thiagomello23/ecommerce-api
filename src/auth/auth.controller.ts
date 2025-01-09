@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
-import { CreateUserDto } from "src/users/dto/create-user.dto";
+import { CreateUserClientDto } from "src/users/dto/create-user-client.dto";
 import { UsersService } from "src/users/users.service";
 import { LoginCredentialsDto } from "./dto/login-credentials.dto";
 import { AuthService } from "./auth.service";
@@ -18,11 +18,21 @@ export class AuthController {
         private authService: AuthService
     ){}
 
-    @Post("signUp")
-    async signUp(
-        @Body() createUser: CreateUserDto
+    @Post("signUpClient")
+    async signUpClient(
+        @Body() createUser: CreateUserClientDto
     ) {
-        return this.usersService.createUser(createUser)
+        return this.usersService.createClientUser(createUser)
+    }
+
+    @Post("signUpVendor")
+    async signUpVendor(){
+
+    }
+
+    @Post("signUpAdmin")
+    async signUpAdmin() {
+
     }
 
     @Post("login")
