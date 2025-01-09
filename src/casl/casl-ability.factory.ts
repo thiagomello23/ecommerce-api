@@ -4,7 +4,7 @@ import { Action } from "./enums/casl-action";
 import { Users } from "src/users/users.entity";
 import { UserRole } from "src/roles/enums/user-role";
 
-export type Subjects = "Users" | "all";
+export type Subjects = "Users" | "Validate" | "all";
 
 export type AppAbility = Ability<[Action, Subjects]>;
 

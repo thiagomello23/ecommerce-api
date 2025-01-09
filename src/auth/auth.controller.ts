@@ -43,7 +43,7 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard, PoliciesGuard)
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, "Users"))
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, "Validate"))
     @Get("validate")
     async validateUser(
         @Req() request

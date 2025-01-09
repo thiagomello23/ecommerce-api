@@ -39,7 +39,7 @@ export class UsersService {
 
         const roleUser = await this.rolesRepository.findOne({
             where: {
-                role: UserRole.USER
+                role: UserRole.CLIENT
             }
         })
 
@@ -53,6 +53,6 @@ export class UsersService {
     }
 
     async createAdminUser(createAdminUser: any) {
-        
+
     }
 }
