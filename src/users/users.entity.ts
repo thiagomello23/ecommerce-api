@@ -25,6 +25,15 @@ export class Users {
     @Column()
     password: string;
 
+    @Column({default: false})
+    verificatedUserEmail: boolean
+
+    @Column({nullable: true})
+    createdAt: string;
+
+    @Column({nullable: true})
+    verificationCode: string;
+
     @ManyToMany(() => Roles, (roles) => roles.users)
     roles: Roles[];
 }

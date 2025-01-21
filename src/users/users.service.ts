@@ -33,9 +33,15 @@ export class UsersService {
 
         const criptPassword = await bcrypt.hash(createUser.password, +process.env.BCRYPT_SALT)
 
+        newUser.firstName = createUser.firstName
+        newUser.lastName = createUser.lastName
         newUser.email = createUser.email
-        // newUser.name = createUser.name
+        newUser.phoneNumber = createUser.phoneNumber
         newUser.password = criptPassword
+        newUser.createdAt = new Date().toISOString()
+
+        // Microservice call to email verification
+        
 
         const roleUser = await this.rolesRepository.findOne({
             where: {
