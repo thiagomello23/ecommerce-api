@@ -8,3 +8,7 @@ export const DatabaseRepositoryConstants = {
 export const JwtStrategyName = "JWT"
 
 export const CHECK_POLICIES_KEY = 'check_policy';
+
+export const microservicesRMQKey = {
+    MESSAGE_QUEUE: "MESSAGE_QUEUE"
+}

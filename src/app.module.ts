@@ -8,6 +8,9 @@ import { CaslModule } from './casl/casl.module';
 import { RolesModule } from './roles/roles.module';
 import { SeedModule } from './seed/seed.module';
 import { PermissionsModule } from './permissions/permissions.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { microservicesRMQKey } from './constants';
+import { RmqModule } from './rmq/rmq.module';
 
 @Module({
   imports: [
@@ -23,9 +26,11 @@ import { PermissionsModule } from './permissions/permissions.module';
     CaslModule,
     RolesModule,
     SeedModule,
-    PermissionsModule
+    PermissionsModule,
+    RmqModule
   ],
   controllers: [],
   providers: [],
+  exports: []
 })
 export class AppModule {}

@@ -1,11 +1,12 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Users } from './users.entity';
-import { DatabaseRepositoryConstants } from 'src/constants';
+import { DatabaseRepositoryConstants, microservicesRMQKey } from 'src/constants';
 import { CreateUserClientDto } from './dto/create-user-client.dto';
 import * as bcrypt from "bcrypt"
 import { Roles } from 'src/roles/roles.entity';
 import { UserRole } from 'src/roles/enums/user-role';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class UsersService {
@@ -14,11 +15,17 @@ export class UsersService {
         @Inject(DatabaseRepositoryConstants.usersRepository)
         private usersRepository: Repository<Users>,
         @Inject(DatabaseRepositoryConstants.rolesRepository)
-        private rolesRepository: Repository<Roles>
+        private rolesRepository: Repository<Roles>,
+        @Inject(microservicesRMQKey.MESSAGE_QUEUE)
+        private readonly messageMs: ClientProxy
     ){}
 
     // By default creates a user with just "USER" role
     async createClientUser(createUser: CreateUserClientDto) {
+        // Microservice call to email verification
+        // Just a test verification
+        // return this.messageMs.send("MESSSSAGE", {id: 222})
+
         const newUser = new Users();
 
         const existingUser = await this.usersRepository.findOne({
@@ -39,9 +46,6 @@ export class UsersService {
         newUser.phoneNumber = createUser.phoneNumber
         newUser.password = criptPassword
         newUser.createdAt = new Date().toISOString()
-
-        // Microservice call to email verification
-        
 
         const roleUser = await this.rolesRepository.findOne({
             where: {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Post, Req, UseGuards } from "@nestjs/common";
 import { CreateUserClientDto } from "src/users/dto/create-user-client.dto";
 import { UsersService } from "src/users/users.service";
 import { LoginCredentialsDto } from "./dto/login-credentials.dto";
@@ -9,6 +9,8 @@ import { CheckPolicies } from "./decorators/check-policies.decorator";
 import { AppAbility } from "src/casl/casl-ability.factory";
 import { Action } from "src/casl/enums/casl-action";
 import { Users } from "src/users/users.entity";
+import { ClientProxy } from "@nestjs/microservices";
+import { microservicesRMQKey } from "src/constants";
 
 @Controller("auth")
 export class AuthController {
@@ -27,7 +29,6 @@ export class AuthController {
 
     @Post("signUpVendor")
     async signUpVendor(){
-
     }
 
     @Post("signUpAdmin")
