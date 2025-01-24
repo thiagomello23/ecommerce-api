@@ -24,7 +24,7 @@ export class UsersService {
     async createClientUser(createUser: CreateUserClientDto) {
         // Microservice call to email verification
         // Just a test verification
-        // return this.messageMs.send("MESSSSAGE", {id: 222})
+        // return this.messageMs.send("SEND_EMAIL_ACCOUNT_VERIFICATION", {id: 222})
 
         const newUser = new Users();
 

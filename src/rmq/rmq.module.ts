@@ -11,7 +11,9 @@ import { microservicesRMQKey } from "src/constants";
       options: {
         urls: ["amqp://localhost:5672"],
         queue: microservicesRMQKey.MESSAGE_QUEUE,
-        queueOptions: { durable: true }
+        queueOptions: { durable: true },
+        persistent: true,
+        prefetchCount: 1
       }
     }])
   ],
