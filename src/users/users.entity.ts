@@ -1,5 +1,5 @@
 import { Roles } from "src/roles/roles.entity";
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Users {
@@ -29,6 +29,7 @@ export class Users {
     verificatedUserEmail: boolean
 
     @Column({nullable: true})
+    @CreateDateColumn({ type: 'timestamp' })
     createdAt: string;
 
     @Column({nullable: true})

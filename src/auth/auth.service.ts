@@ -34,6 +34,10 @@ export class AuthService {
             throw new UnauthorizedException("Email or password invalid!")
         }
 
+        if(!existingUser.verificatedUserEmail) {
+            throw new UnauthorizedException("Email has not being verified!")
+        }
+
         const payload: JwtPayload = {
             sub: existingUser.id,
             email: existingUser.email
