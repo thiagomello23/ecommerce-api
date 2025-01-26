@@ -31,11 +31,16 @@ export class AuthController {
 
     @Post("signUpVendor")
     async signUpVendor(){
+
     }
 
     @Post("signUpAdmin")
-    async signUpAdmin() {
-
+    @UseGuards(JwtAuthGuard, PoliciesGuard)
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Users"))
+    async signUpAdmin(
+        @Body() createUser: CreateUserClientDto
+    ) {
+        return this.usersService.createAdminUser(createUser)
     }
 
     @Post("login")
