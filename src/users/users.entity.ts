@@ -1,5 +1,6 @@
 import { Roles } from "src/roles/roles.entity";
-import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Vendors } from "src/vendor/vendors.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Users {
@@ -37,4 +38,7 @@ export class Users {
 
     @ManyToMany(() => Roles, (roles) => roles.users)
     roles: Roles[];
+
+    @OneToOne(() => Vendors, (vendors) => vendors.user) // specify inverse side as a second parameter
+    vendors: Vendors
 }

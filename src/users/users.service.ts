@@ -9,6 +9,9 @@ import { UserRole } from 'src/roles/enums/user-role';
 import { ClientProxy } from '@nestjs/microservices';
 import { create } from 'domain';
 import { generateVerificationCode } from 'src/auth/helper/generate-verification-code.helper';
+import { CreateUserVendor } from './dto/create-user-vendor.dto';
+import { Vendors } from 'src/vendor/vendors.entity';
+import { VendorsService } from 'src/vendor/vendors.service';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +26,8 @@ export class UsersService {
         @Inject(microservicesRMQKey.MESSAGE_QUEUE)
         private readonly messageMs: ClientProxy,
         @Inject(DatabaseRepositoryConstants.dataSource)
-        private readonly dataSource: DataSource
+        private readonly dataSource: DataSource,
+        private readonly vendorsService: VendorsService
     ){
         this.queryRunner = dataSource.createQueryRunner()
     }
@@ -88,8 +92,73 @@ export class UsersService {
         return returnCreatedUser
     }
 
-    async createVendorUser(createVendorUser: any) {
+    async createVendorUser(createVendorUser: CreateUserVendor) {
+        const newVendorUser = new Users()
 
+        const existingUser = await this.usersRepository
+            .createQueryBuilder("users")
+            .where("users.phoneNumber = :phoneNumber", {phoneNumber: createVendorUser.phoneNumber})
+            .orWhere("users.email = :email", {email: createVendorUser.email})
+            .getOne()
+
+        if(existingUser) {
+            throw new BadRequestException("User email or phone number already beeing used;")
+        }
+
+        const criptPassword = await bcrypt.hash(createVendorUser.password, +process.env.BCRYPT_SALT)
+
+        newVendorUser.firstName = createVendorUser.firstName
+        newVendorUser.lastName = createVendorUser.lastName
+        newVendorUser.email = createVendorUser.email
+        newVendorUser.phoneNumber = createVendorUser.phoneNumber
+        newVendorUser.password = criptPassword
+        newVendorUser.verificatedUserEmail = false;
+        newVendorUser.verificationCode = generateVerificationCode()
+
+        const vendorRole = await this.rolesRepository.findOne({
+            where: {
+                role: UserRole.VENDOR
+            }
+        })
+
+        const clientRole = await this.rolesRepository.findOne({
+            where: {
+                role: UserRole.CLIENT
+            }
+        })
+
+        newVendorUser.roles = [vendorRole, clientRole]
+
+        const newVendor = await this.vendorsService.createVendor(createVendorUser.vendor)
+
+        // Transaction to save user and vendor data
+        await this.queryRunner.connect()
+        await this.queryRunner.startTransaction()
+
+        try {
+            await this.queryRunner.manager.save(newVendorUser)
+            newVendor.user = newVendorUser;
+            await this.queryRunner.manager.save(newVendor)
+            await this.queryRunner.commitTransaction()
+        } catch(err) {
+            console.log(err)
+            await this.queryRunner.rollbackTransaction()
+        } finally {
+            await this.queryRunner.release()
+        }
+
+        // For now just sending email verification
+        await this.messageMs.send(
+            microservicesRMQKey.SEND_EMAIL_ACCOUNT_VERIFICATION, 
+            {
+                userEmail: newVendorUser.email,
+                verificationCode: newVendorUser.verificationCode,
+                firstName: newVendorUser.firstName,
+                lastName: newVendorUser.lastName
+            }
+        ).toPromise()
+
+        return newVendorUser;
     }
 
     // For admins are not need for email verification

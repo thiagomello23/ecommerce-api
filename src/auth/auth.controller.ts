@@ -13,6 +13,7 @@ import { ClientProxy } from "@nestjs/microservices";
 import { microservicesRMQKey } from "src/constants";
 import { EmailVerificationDto } from "./dto/email-verification.dto";
 import { ResendEmailVerification } from "./dto/resend-email-verification.dto";
+import { CreateUserVendor } from "src/users/dto/create-user-vendor.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -24,14 +25,16 @@ export class AuthController {
 
     @Post("signUpClient")
     async signUpClient(
-        @Body() createUser: CreateUserClientDto
+        @Body() createUser: any
     ) {
         return this.usersService.createClientUser(createUser)
     }
 
     @Post("signUpVendor")
-    async signUpVendor(){
-
+    async signUpVendor(
+        @Body() createUser: CreateUserVendor
+    ){
+        return this.usersService.createVendorUser(createUser)
     }
 
     @Post("signUpAdmin")

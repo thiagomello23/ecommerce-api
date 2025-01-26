@@ -80,6 +80,7 @@ export class SeedService {
         const criptDefaultAdminPass = bcrypt.hashSync(process.env.ADMIN_PASS, +process.env.BCRYPT_SALT) 
         defaultAdminUser.password = criptDefaultAdminPass
         defaultAdminUser.roles = [adminRole]
+        defaultAdminUser.verificatedUserEmail = true;
 
         await this.usersRepository.save(defaultAdminUser)
 
