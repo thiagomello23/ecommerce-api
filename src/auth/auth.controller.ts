@@ -11,6 +11,8 @@ import { Action } from "src/casl/enums/casl-action";
 import { Users } from "src/users/users.entity";
 import { ClientProxy } from "@nestjs/microservices";
 import { microservicesRMQKey } from "src/constants";
+import { EmailVerificationDto } from "./dto/email-verification.dto";
+import { ResendEmailVerification } from "./dto/resend-email-verification.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -41,6 +43,20 @@ export class AuthController {
         @Body() loginCredentials: LoginCredentialsDto
     ) {
         return this.authService.login(loginCredentials)
+    }
+
+    @Post("/verify-email-account")
+    async emailVerification(
+        @Body() emailVerificationDto: EmailVerificationDto
+    ) {
+        return this.authService.emailVerification(emailVerificationDto)
+    }
+
+    @Post("/resend-account-verification")
+    async resendAccountVerification(
+        @Body() emailVerificationDto: ResendEmailVerification
+    ) {
+        return this.authService.resendAccountVerification(emailVerificationDto)
     }
 
     @UseGuards(JwtAuthGuard, PoliciesGuard)

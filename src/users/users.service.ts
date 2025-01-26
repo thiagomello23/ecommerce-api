@@ -8,6 +8,7 @@ import { Roles } from 'src/roles/roles.entity';
 import { UserRole } from 'src/roles/enums/user-role';
 import { ClientProxy } from '@nestjs/microservices';
 import { create } from 'domain';
+import { generateVerificationCode } from 'src/auth/helper/generate-verification-code.helper';
 
 @Injectable()
 export class UsersService {
@@ -49,7 +50,7 @@ export class UsersService {
         newUser.phoneNumber = createUser.phoneNumber
         newUser.password = criptPassword
         newUser.verificatedUserEmail = false;
-        newUser.verificationCode = this.generateVerificationCode()
+        newUser.verificationCode = generateVerificationCode()
 
         const roleUser = await this.rolesRepository.findOne({
             where: {
@@ -75,7 +76,7 @@ export class UsersService {
         }
 
         await this.messageMs.send(
-            "SEND_EMAIL_ACCOUNT_VERIFICATION", 
+            microservicesRMQKey.SEND_EMAIL_ACCOUNT_VERIFICATION, 
             {
                 userEmail: returnCreatedUser.email,
                 verificationCode: returnCreatedUser.verificationCode,
@@ -94,8 +95,4 @@ export class UsersService {
     async createAdminUser(createAdminUser: any) {
 
     }
-
-    generateVerificationCode(): string {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    }    
 }
