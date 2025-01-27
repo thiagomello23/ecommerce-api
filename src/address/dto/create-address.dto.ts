@@ -13,7 +13,25 @@ export class CreateAddressDto {
     @IsNotEmpty()
     country: string;
 
+    @IsString()
+    district: string;
+
+    @IsString()
+    @IsNotEmpty()
+    street: string;
+
+    @IsString()
+    @IsNotEmpty()
+    houseNumber: string;
+
+    @IsString()
+    locationReference: string;
+
     // Just a simple validation for zipcode
     @IsPostalCode()
     postalCode: string;
+
+    @IsString()
+    @IsNotEmpty()
+    userId: string;
 }
