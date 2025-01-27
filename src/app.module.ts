@@ -12,6 +12,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { microservicesRMQKey } from './constants';
 import { RmqModule } from './rmq/rmq.module';
 import { VendorsModule } from './vendor/vendors.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { VendorsModule } from './vendor/vendors.module';
     SeedModule,
     PermissionsModule,
     RmqModule,
-    VendorsModule
+    VendorsModule,
+    AddressModule
   ],
   controllers: [],
   providers: [],

@@ -1,6 +1,7 @@
+import { Address } from "src/address/address.entity";
 import { Roles } from "src/roles/roles.entity";
 import { Vendors } from "src/vendor/vendors.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Users {
@@ -41,4 +42,7 @@ export class Users {
 
     @OneToOne(() => Vendors, (vendors) => vendors.user) // specify inverse side as a second parameter
     vendors: Vendors
+
+    @OneToMany(() => Address, (address) => address.user)
+    address: Address[]
 }
