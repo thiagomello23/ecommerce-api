@@ -13,7 +13,6 @@ import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
-
     constructor(
         @Inject(DatabaseRepositoryConstants.usersRepository)
         private usersRepository: Repository<Users>,

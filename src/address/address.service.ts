@@ -44,7 +44,10 @@ export class AddressService {
         return this.addressRepository.save(address)
     }
 
-    async validateCityCountryZipAndState(
+    async validateAddress(
+        zipCode: string,
+        address: string
+    ) {
         
-    ) {}
+    }
 }
