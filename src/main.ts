@@ -9,7 +9,7 @@ async function bootstrap() {
   const seedService = app.get(SeedService)
   // This will work both in dev and prod environment because create roles, permission and a default admin user
   seedService.seed()
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe({transform: true}))
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

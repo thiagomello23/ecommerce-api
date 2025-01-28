@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { Users } from './users.entity';
 import { DatabaseRepositoryConstants, microservicesRMQKey } from 'src/constants';
@@ -12,6 +12,7 @@ import { generateVerificationCode } from 'src/auth/helper/generate-verification-
 import { CreateUserVendor } from './dto/create-user-vendor.dto';
 import { Vendors } from 'src/vendor/vendors.entity';
 import { VendorsService } from 'src/vendor/vendors.service';
+import { AddressService } from 'src/address/address.service';
 
 @Injectable()
 export class UsersService {
@@ -27,10 +28,9 @@ export class UsersService {
         private readonly messageMs: ClientProxy,
         @Inject(DatabaseRepositoryConstants.dataSource)
         private readonly dataSource: DataSource,
-        private readonly vendorsService: VendorsService
-    ){
-        this.queryRunner = dataSource.createQueryRunner()
-    }
+        private readonly vendorsService: VendorsService,
+        private readonly addressService: AddressService
+    ){}
 
     // By default creates a user with just "USER" role
     async createClientUser(createUser: CreateUserClientDto) {
@@ -132,19 +132,39 @@ export class UsersService {
         const newVendor = await this.vendorsService.createVendor(createVendorUser.vendor)
 
         // Transaction to save user and vendor data
-        await this.queryRunner.connect()
-        await this.queryRunner.startTransaction()
+        this.queryRunner = this.dataSource.createQueryRunner()
 
         try {
+            // Start transaction
+            await this.queryRunner.connect()
+            await this.queryRunner.startTransaction()
+
+            // Save new user
             await this.queryRunner.manager.save(newVendorUser)
+
+            // Save new vendor
             newVendor.user = newVendorUser;
             await this.queryRunner.manager.save(newVendor)
+
+            // Validate address
+            const mappedAddress = await this.addressService.mapAddressWithoutUser(createVendorUser.address)
+            const validAddress = await this.addressService.validateAddress(mappedAddress)
+
+            if(!validAddress) {
+                throw new BadRequestException("Invalid Address!")
+            }
+
+            // Save address
+            mappedAddress.user = newVendorUser
+            await this.queryRunner.manager.save(mappedAddress)
             await this.queryRunner.commitTransaction()
         } catch(err) {
-            console.log(err)
             await this.queryRunner.rollbackTransaction()
+            throw err;
         } finally {
-            await this.queryRunner.release()
+            if(!this.queryRunner.isReleased){
+                await this.queryRunner.release()
+            }
         }
 
         // For now just sending email verification
@@ -158,7 +178,7 @@ export class UsersService {
             }
         ).toPromise()
 
-        return newVendorUser;
+        return newVendorUser
     }
 
     // For admins are not need for email verification

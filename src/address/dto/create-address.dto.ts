@@ -28,10 +28,6 @@ export class CreateAddressDto {
     locationReference: string;
 
     // Just a simple validation for zipcode
-    @IsPostalCode()
+    @IsPostalCode("any")
     postalCode: string;
-
-    @IsString()
-    @IsNotEmpty()
-    userId: string;
 }

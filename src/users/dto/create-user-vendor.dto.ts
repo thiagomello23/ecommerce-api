@@ -1,4 +1,6 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsDefined, IsEmail, IsNotEmpty, IsNotEmptyObject, IsString, ValidateNested } from "class-validator";
+import { CreateAddressDto } from "src/address/dto/create-address.dto";
 import { CreateVendor } from "src/vendor/dto/create-vendor.dto";
 
 export class CreateUserVendor {
@@ -21,5 +23,15 @@ export class CreateUserVendor {
     @IsNotEmpty()
     password: string;
 
+    @IsDefined()
+    @ValidateNested()
+    @IsNotEmptyObject()
+    @Type(() => CreateVendor)
     vendor: CreateVendor
+
+    @IsDefined()
+    @ValidateNested()
+    @IsNotEmptyObject()
+    @Type(() => CreateAddressDto)
+    address: CreateAddressDto
 }
