@@ -10,6 +10,7 @@ import { EmailVerificationDto } from './dto/email-verification.dto';
 import { generateVerificationCode } from './helper/generate-verification-code.helper';
 import { ResendEmailVerification } from './dto/resend-email-verification.dto';
 import { ClientProxy } from '@nestjs/microservices';
+import { PhoneNumberVerification } from './dto/phonenumber-verification.dto';
 
 @Injectable()
 export class AuthService {
@@ -77,6 +78,20 @@ export class AuthService {
         existingUser.verificationCode = null;
 
         return this.usersRepository.save(existingUser)
+    }
+
+    async sendPhoneNumberVerification(
+        phonenumberVerificationDto: PhoneNumberVerification
+    ){
+        return this.messageMs.send(
+            microservicesRMQKey.SEND_PHONENUMBER_ACCOUNT_VERIFICATION,
+            {
+                phoneNumber: phonenumberVerificationDto.phoneNumber,
+                verificationCode: phonenumberVerificationDto.verificationCode,
+                firstName: phonenumberVerificationDto.firstName,
+                lastName: phonenumberVerificationDto.lastName 
+            }
+        )
     }
 
     async resendAccountVerification(
