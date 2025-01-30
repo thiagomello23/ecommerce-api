@@ -1,4 +1,4 @@
-import { Injectable, Inject, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import * as bcrypt from "bcrypt"
 import { Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import { EmailVerificationDto } from './dto/email-verification.dto';
 import { generateVerificationCode } from './helper/generate-verification-code.helper';
 import { ResendEmailVerification } from './dto/resend-email-verification.dto';
 import { ClientProxy } from '@nestjs/microservices';
+import { SendPhoneNumberVerification } from './dto/send-phonenumber-verification.dto';
 import { PhoneNumberVerification } from './dto/phonenumber-verification.dto';
 
 @Injectable()
@@ -41,7 +42,7 @@ export class AuthService {
         }
 
         if(!existingUser.verificatedUserEmail) {
-            throw new UnauthorizedException("Email has not being verified!")
+            throw new UnauthorizedException("Email has not been verified!")
         }
 
         const payload: JwtPayload = {
@@ -66,30 +67,73 @@ export class AuthService {
             .andWhere("users.verificationCode = :verificationCode", {verificationCode: emailVerificationDto.verificationCode})
             .getOne()
 
-        if(existingUser.verificatedUserEmail) {
-            throw new BadRequestException("User has already being verified!")
+        if(!existingUser) {
+            throw new NotFoundException("User email or verification code invalid!")
         }
 
-        if(!existingUser) {
-            throw new UnauthorizedException("User email or verification code invalid!")
+        if(existingUser.verificatedUserEmail) {
+            throw new BadRequestException("User has already been verified!")
         }
 
         existingUser.verificatedUserEmail = true;
-        existingUser.verificationCode = null;
+        existingUser.emailVerificationCode = null;
 
         return this.usersRepository.save(existingUser)
     }
 
-    async sendPhoneNumberVerification(
-        phonenumberVerificationDto: PhoneNumberVerification
+    async phoneNumberVerification(
+        phoneNumberVerification: PhoneNumberVerification
+    ) {
+        const existingUser = await this.usersRepository
+            .createQueryBuilder("users")
+            .andWhere("users.phoneNumber = :phoneNumber", {phoneNumber: phoneNumberVerification.phoneNumber})
+            .andWhere(
+                "users.phoneNumberVerificationCode = :phoneNumberVerificationCode", 
+                {phoneNumberVerificationCode: phoneNumberVerification.verificationCode}
+            )
+            .getOne()
+        
+        if(!existingUser) {
+            throw new NotFoundException("Invalid phone number or verification code!")
+        }
+
+        if(existingUser.verificatedPhoneNumber) {
+            throw new BadRequestException("User phone number has already been verified!")
+        }
+
+        existingUser.phoneNumberVerificationCode = null;
+        existingUser.verificatedPhoneNumber = true;
+
+        return this.usersRepository.save(existingUser)
+    }
+
+    async sendOrResendPhoneNumberVerification(
+        sendPhoneNumberVerification: SendPhoneNumberVerification
     ){
+
+        const existingUser = await this.usersRepository
+            .createQueryBuilder("users")
+            .where("users.verificatedPhoneNumber = :verificatedPhoneNumber", {verificatedPhoneNumber: false})
+            .andWhere("users.phoneNumber = :phoneNumber", {phoneNumber: sendPhoneNumberVerification.phoneNumber})
+            .getOne()
+
+        if(!existingUser) {
+            throw new NotFoundException("User phone number not found!")
+        }
+
+        const generatedVerificationCode = generateVerificationCode()
+
+        existingUser.phoneNumberVerificationCode = generatedVerificationCode;
+
+        await this.usersRepository.save(existingUser)
+
         return this.messageMs.send(
             microservicesRMQKey.SEND_PHONENUMBER_ACCOUNT_VERIFICATION,
             {
-                phoneNumber: phonenumberVerificationDto.phoneNumber,
-                verificationCode: phonenumberVerificationDto.verificationCode,
-                firstName: phonenumberVerificationDto.firstName,
-                lastName: phonenumberVerificationDto.lastName 
+                phoneNumber: sendPhoneNumberVerification.phoneNumber,
+                verificationCode: generatedVerificationCode,
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName
             }
         )
     }
@@ -110,7 +154,7 @@ export class AuthService {
         // Regenerate verification code and Resend email with the verification code
         const verificationCode = generateVerificationCode()
 
-        existingUser.verificationCode = verificationCode
+        existingUser.emailVerificationCode = verificationCode
 
         await this.usersRepository.save(existingUser)
 

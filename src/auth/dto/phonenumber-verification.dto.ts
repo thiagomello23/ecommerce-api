@@ -1,19 +1,9 @@
-import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, Length } from "class-validator";
+import { IsNotEmpty, IsPhoneNumber, Length } from "class-validator";
 
 export class PhoneNumberVerification {
-    @IsPhoneNumber()
+    // @IsPhoneNumber()
     phoneNumber: string;
 
-    @IsString()
-    @IsNotEmpty()
     @Length(6)
     verificationCode: string;
-
-    @IsString()
-    @IsNotEmpty()
-    firstName: string;
-
-    @IsString()
-    @IsNotEmpty()
-    lastName: string;
 }

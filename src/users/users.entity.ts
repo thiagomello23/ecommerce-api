@@ -27,15 +27,24 @@ export class Users {
     @Column()
     password: string;
 
+    // For all accounts email verification is necessary to login
     @Column({default: false})
     verificatedUserEmail: boolean
+
+    // For vendors to be accepted in the platform is necessary to have a
+    // Verified phoneNumber in order to be a valid vendor
+    @Column({default: false})
+    verificatedPhoneNumber: boolean;
 
     @Column({nullable: true})
     @CreateDateColumn({ type: 'timestamp' })
     createdAt: string;
 
     @Column({nullable: true})
-    verificationCode: string;
+    emailVerificationCode: string;
+
+    @Column({nullable: true})
+    phoneNumberVerificationCode: string;
 
     @ManyToMany(() => Roles, (roles) => roles.users)
     roles: Roles[];

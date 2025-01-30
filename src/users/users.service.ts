@@ -17,8 +17,6 @@ import { AddressService } from 'src/address/address.service';
 @Injectable()
 export class UsersService {
 
-    private queryRunner: QueryRunner;
-
     constructor(
         @Inject(DatabaseRepositoryConstants.usersRepository)
         private usersRepository: Repository<Users>,
@@ -54,7 +52,7 @@ export class UsersService {
         newUser.phoneNumber = createUser.phoneNumber
         newUser.password = criptPassword
         newUser.verificatedUserEmail = false;
-        newUser.verificationCode = generateVerificationCode()
+        newUser.emailVerificationCode = generateVerificationCode()
 
         const roleUser = await this.rolesRepository.findOne({
             where: {
@@ -64,26 +62,30 @@ export class UsersService {
 
         newUser.roles = [roleUser]
 
-        await this.queryRunner.connect()
-        await this.queryRunner.startTransaction()
+        const queryRunner = this.dataSource.createQueryRunner()
 
         let returnCreatedUser;
 
         try {
-            returnCreatedUser = await this.queryRunner.manager.save(newUser)
-            await this.queryRunner.commitTransaction()
+            await queryRunner.connect()
+            await queryRunner.startTransaction()
+
+            returnCreatedUser = await queryRunner.manager.save(newUser)
+            await queryRunner.commitTransaction()
         } catch(err) {
-            await this.queryRunner.rollbackTransaction()
+            await queryRunner.rollbackTransaction()
             throw err;
         } finally {
-            await this.queryRunner.release()
+            if(!queryRunner.isReleased){
+                await queryRunner.release()
+            }
         }
 
         await this.messageMs.send(
             microservicesRMQKey.SEND_EMAIL_ACCOUNT_VERIFICATION, 
             {
                 userEmail: returnCreatedUser.email,
-                verificationCode: returnCreatedUser.verificationCode,
+                verificationCode: returnCreatedUser.emailVerificationCode,
                 firstName: returnCreatedUser.firstName,
                 lastName: returnCreatedUser.lastName
             }
@@ -113,7 +115,7 @@ export class UsersService {
         newVendorUser.phoneNumber = createVendorUser.phoneNumber
         newVendorUser.password = criptPassword
         newVendorUser.verificatedUserEmail = false;
-        newVendorUser.verificationCode = generateVerificationCode()
+        newVendorUser.emailVerificationCode = generateVerificationCode()
 
         const vendorRole = await this.rolesRepository.findOne({
             where: {
@@ -132,19 +134,19 @@ export class UsersService {
         const newVendor = await this.vendorsService.createVendor(createVendorUser.vendor)
 
         // Transaction to save user and vendor data
-        this.queryRunner = this.dataSource.createQueryRunner()
+        const queryRunner = this.dataSource.createQueryRunner()
 
         try {
             // Start transaction
-            await this.queryRunner.connect()
-            await this.queryRunner.startTransaction()
+            await queryRunner.connect()
+            await queryRunner.startTransaction()
 
             // Save new user
-            await this.queryRunner.manager.save(newVendorUser)
+            await queryRunner.manager.save(newVendorUser)
 
             // Save new vendor
             newVendor.user = newVendorUser;
-            await this.queryRunner.manager.save(newVendor)
+            await queryRunner.manager.save(newVendor)
 
             // Validate address
             const mappedAddress = await this.addressService.mapAddressWithoutUser(createVendorUser.address)
@@ -156,14 +158,14 @@ export class UsersService {
 
             // Save address
             mappedAddress.user = newVendorUser
-            await this.queryRunner.manager.save(mappedAddress)
-            await this.queryRunner.commitTransaction()
+            await queryRunner.manager.save(mappedAddress)
+            await queryRunner.commitTransaction()
         } catch(err) {
-            await this.queryRunner.rollbackTransaction()
+            await queryRunner.rollbackTransaction()
             throw err;
         } finally {
-            if(!this.queryRunner.isReleased){
-                await this.queryRunner.release()
+            if(!queryRunner.isReleased){
+                await queryRunner.release()
             }
         }
 
@@ -172,7 +174,7 @@ export class UsersService {
             microservicesRMQKey.SEND_EMAIL_ACCOUNT_VERIFICATION, 
             {
                 userEmail: newVendorUser.email,
-                verificationCode: newVendorUser.verificationCode,
+                verificationCode: newVendorUser.emailVerificationCode,
                 firstName: newVendorUser.firstName,
                 lastName: newVendorUser.lastName
             }
@@ -203,7 +205,7 @@ export class UsersService {
         newAdminUser.phoneNumber = createAdminUser.phoneNumber
         newAdminUser.password = criptPassword
         newAdminUser.verificatedUserEmail = true
-        newAdminUser.verificationCode = null
+        newAdminUser.emailVerificationCode = null
 
         const adminRole = await this.rolesRepository.findOne({
             where: {

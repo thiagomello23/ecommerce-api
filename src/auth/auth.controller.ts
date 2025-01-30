@@ -14,6 +14,7 @@ import { microservicesRMQKey } from "src/constants";
 import { EmailVerificationDto } from "./dto/email-verification.dto";
 import { ResendEmailVerification } from "./dto/resend-email-verification.dto";
 import { CreateUserVendor } from "src/users/dto/create-user-vendor.dto";
+import { SendPhoneNumberVerification } from "./dto/send-phonenumber-verification.dto";
 import { PhoneNumberVerification } from "./dto/phonenumber-verification.dto";
 
 @Controller("auth")
@@ -69,11 +70,18 @@ export class AuthController {
         return this.authService.resendAccountVerification(emailVerificationDto)
     }
 
-    @Post("resend-phonenumber-verification")
-    async sendPhoneNumberVerification(
-        @Body() phonenumberVerificationDto: PhoneNumberVerification
+    @Post("/verify-phonenumber-account")
+    async phoneNumberVerification(
+        @Body() phoneNumberVerification: PhoneNumberVerification
+    ){
+        return this.authService.phoneNumberVerification(phoneNumberVerification)
+    }
+
+    @Post("send-resend-phonenumber-verification")
+    async sendOrResendPhoneNumberVerification(
+        @Body() sendPhoneNumberVerification: SendPhoneNumberVerification
     ) {
-        return this.authService.sendPhoneNumberVerification(phonenumberVerificationDto)
+        return this.authService.sendOrResendPhoneNumberVerification(sendPhoneNumberVerification)
     }
 
     @UseGuards(JwtAuthGuard, PoliciesGuard)
