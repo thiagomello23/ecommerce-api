@@ -206,6 +206,8 @@ export class UsersService {
         newAdminUser.password = criptPassword
         newAdminUser.verificatedUserEmail = true
         newAdminUser.emailVerificationCode = null
+        newAdminUser.verificatedPhoneNumber = true
+        newAdminUser.verificatedPhoneNumber = null
 
         const adminRole = await this.rolesRepository.findOne({
             where: {
