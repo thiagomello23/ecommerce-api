@@ -8,9 +8,6 @@ import { PoliciesGuard } from "./policies.guard";
 import { CheckPolicies } from "./decorators/check-policies.decorator";
 import { AppAbility } from "src/casl/casl-ability.factory";
 import { Action } from "src/casl/enums/casl-action";
-import { Users } from "src/users/users.entity";
-import { ClientProxy } from "@nestjs/microservices";
-import { microservicesRMQKey } from "src/constants";
 import { EmailVerificationDto } from "./dto/email-verification.dto";
 import { ResendEmailVerification } from "./dto/resend-email-verification.dto";
 import { CreateUserVendor } from "src/users/dto/create-user-vendor.dto";
@@ -28,7 +25,7 @@ export class AuthController {
 
     @Post("signUpClient")
     async signUpClient(
-        @Body() createUser: any
+        @Body() createUser: CreateUserClientDto
     ) {
         return this.usersService.createClientUser(createUser)
     }
