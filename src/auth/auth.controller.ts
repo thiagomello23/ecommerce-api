@@ -66,7 +66,6 @@ export class AuthController {
         return this.authService.emailVerification(emailVerificationDto)
     }
 
-    // For now just for testing
     @Post("/resend-account-verification")
     @ApiBody({type: ResendEmailVerification})
     async resendAccountVerification(

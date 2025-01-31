@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, Matches } from "class-validator";
 
 export class CreateUserClientDto {
 
@@ -20,7 +20,7 @@ export class CreateUserClientDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    @IsPhoneNumber()
+    @Matches("/^\+?[1-9]\d{1,14}$/")
     phoneNumber: string;
 
     @ApiProperty()
