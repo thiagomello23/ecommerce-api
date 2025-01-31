@@ -12,6 +12,8 @@ import { ResendEmailVerification } from './dto/resend-email-verification.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { SendPhoneNumberVerification } from './dto/send-phonenumber-verification.dto';
 import { PhoneNumberVerification } from './dto/phonenumber-verification.dto';
+import { ValidateUserVendorDto } from './dto/validate-user-vendor.dto';
+import { Vendors } from 'src/vendor/vendors.entity';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +23,8 @@ export class AuthService {
         private jwtService: JwtService,
         @Inject(microservicesRMQKey.MESSAGE_QUEUE)
         private readonly messageMs: ClientProxy,
+        @Inject(DatabaseRepositoryConstants.vendorsRepository)
+        private readonly vendorsRepository: Repository<Vendors>
     ){}
 
     async login(loginCredentials: LoginCredentialsDto) {
@@ -167,5 +171,27 @@ export class AuthService {
                 lastName: existingUser.lastName
             }
         )
+    }
+
+    async validateUserVendor(
+        validateUserVendorDto: ValidateUserVendorDto
+    ) {
+        const existingVendorUser = await this.usersRepository
+            .createQueryBuilder("usuarios")
+            .innerJoinAndSelect("usuarios.vendors", "vendors")
+            .where("usuarios.id = :usuarioId", {usuarioId: validateUserVendorDto.userId})
+            .getOne()
+
+        if(!existingVendorUser) {
+            throw new NotFoundException("Invalid user id!")
+        }
+
+        if(!existingVendorUser.verificatedUserEmail && !existingVendorUser.verificatedPhoneNumber) {
+            throw new UnauthorizedException("Vendor user must have a verified email and phone number before get a valid account!")
+        }
+
+        existingVendorUser.vendors.validVendor = true;
+
+        return this.vendorsRepository.save(existingVendorUser.vendors)
     }
 }

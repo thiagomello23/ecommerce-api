@@ -16,6 +16,7 @@ import { ResendEmailVerification } from "./dto/resend-email-verification.dto";
 import { CreateUserVendor } from "src/users/dto/create-user-vendor.dto";
 import { SendPhoneNumberVerification } from "./dto/send-phonenumber-verification.dto";
 import { PhoneNumberVerification } from "./dto/phonenumber-verification.dto";
+import { ValidateUserVendorDto } from "./dto/validate-user-vendor.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -82,6 +83,15 @@ export class AuthController {
         @Body() sendPhoneNumberVerification: SendPhoneNumberVerification
     ) {
         return this.authService.sendOrResendPhoneNumberVerification(sendPhoneNumberVerification)
+    }
+
+    // This transforms a normal vendor user into a valid vendor user with the attribute "validVendor"
+    // And this action will only be allowed by admin users
+    @Post("/validate-user-vendor")
+    async validateUserVendor(
+        @Body() validateUserVendorDto: ValidateUserVendorDto
+    ) {
+        return this.authService.validateUserVendor(validateUserVendorDto)
     }
 
     @UseGuards(JwtAuthGuard, PoliciesGuard)
