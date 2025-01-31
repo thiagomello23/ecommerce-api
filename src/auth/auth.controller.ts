@@ -14,6 +14,7 @@ import { CreateUserVendor } from "src/users/dto/create-user-vendor.dto";
 import { SendPhoneNumberVerification } from "./dto/send-phonenumber-verification.dto";
 import { PhoneNumberVerification } from "./dto/phonenumber-verification.dto";
 import { ValidateUserVendorDto } from "./dto/validate-user-vendor.dto";
+import { ApiBody } from "@nestjs/swagger";
 
 @Controller("auth")
 export class AuthController {
@@ -24,6 +25,7 @@ export class AuthController {
     ){}
 
     @Post("signUpClient")
+    @ApiBody({type: CreateUserClientDto})
     async signUpClient(
         @Body() createUser: CreateUserClientDto
     ) {
@@ -31,6 +33,7 @@ export class AuthController {
     }
 
     @Post("signUpVendor")
+    @ApiBody({type: CreateUserVendor})
     async signUpVendor(
         @Body() createUser: CreateUserVendor
     ){
@@ -40,6 +43,7 @@ export class AuthController {
     @Post("signUpAdmin")
     @UseGuards(JwtAuthGuard, PoliciesGuard)
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Users"))
+    @ApiBody({type: CreateUserClientDto})
     async signUpAdmin(
         @Body() createUser: CreateUserClientDto
     ) {
@@ -47,6 +51,7 @@ export class AuthController {
     }
 
     @Post("login")
+    @ApiBody({type: LoginCredentialsDto})
     async login(
         @Body() loginCredentials: LoginCredentialsDto
     ) {
@@ -54,6 +59,7 @@ export class AuthController {
     }
 
     @Post("/verify-email-account")
+    @ApiBody({type: EmailVerificationDto})
     async emailVerification(
         @Body() emailVerificationDto: EmailVerificationDto
     ) {
@@ -62,6 +68,7 @@ export class AuthController {
 
     // For now just for testing
     @Post("/resend-account-verification")
+    @ApiBody({type: ResendEmailVerification})
     async resendAccountVerification(
         @Body() emailVerificationDto: ResendEmailVerification
     ) {
@@ -69,6 +76,7 @@ export class AuthController {
     }
 
     @Post("/verify-phonenumber-account")
+    @ApiBody({type: PhoneNumberVerification})
     async phoneNumberVerification(
         @Body() phoneNumberVerification: PhoneNumberVerification
     ){
@@ -76,6 +84,7 @@ export class AuthController {
     }
 
     @Post("send-resend-phonenumber-verification")
+    @ApiBody({type: SendPhoneNumberVerification})
     async sendOrResendPhoneNumberVerification(
         @Body() sendPhoneNumberVerification: SendPhoneNumberVerification
     ) {
@@ -85,6 +94,7 @@ export class AuthController {
     // This transforms a normal vendor user into a valid vendor user with the attribute "validVendor"
     // And this action will only be allowed by admin users
     @Post("/validate-user-vendor")
+    @ApiBody({type: ValidateUserVendorDto})
     async validateUserVendor(
         @Body() validateUserVendorDto: ValidateUserVendorDto
     ) {
