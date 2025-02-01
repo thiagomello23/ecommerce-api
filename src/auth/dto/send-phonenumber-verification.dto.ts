@@ -3,6 +3,6 @@ import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, Length, Matches } from "c
 
 export class SendPhoneNumberVerification {
     @ApiProperty()
-    @Matches("/^\+?[1-9]\d{1,14}$/")
+    @Matches(/^\+?[1-9]\d{1,14}$/)
     phoneNumber: string;
 }

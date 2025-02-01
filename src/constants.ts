@@ -12,6 +12,8 @@ export const JwtStrategyName = "JWT"
 
 export const CHECK_POLICIES_KEY = 'check_policy';
 
+export const IS_PUBLIC_KEY = 'isPublic'
+
 export const microservicesRMQKey = {
     MESSAGE_QUEUE: "MESSAGE_QUEUE",
     SEND_EMAIL_ACCOUNT_VERIFICATION: "SEND_EMAIL_ACCOUNT_VERIFICATION",

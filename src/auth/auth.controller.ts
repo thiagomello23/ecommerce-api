@@ -15,6 +15,7 @@ import { SendPhoneNumberVerification } from "./dto/send-phonenumber-verification
 import { PhoneNumberVerification } from "./dto/phonenumber-verification.dto";
 import { ValidateUserVendorDto } from "./dto/validate-user-vendor.dto";
 import { ApiBody } from "@nestjs/swagger";
+import { Public } from "./decorators/is-public.decorator";
 
 @Controller("auth")
 export class AuthController {
@@ -25,6 +26,7 @@ export class AuthController {
     ){}
 
     @Post("signUpClient")
+    @Public()
     @ApiBody({type: CreateUserClientDto})
     async signUpClient(
         @Body() createUser: CreateUserClientDto

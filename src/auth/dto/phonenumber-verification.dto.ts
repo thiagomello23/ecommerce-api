@@ -3,7 +3,7 @@ import { IsNotEmpty, IsPhoneNumber, Length, Matches } from "class-validator";
 
 export class PhoneNumberVerification {
     @ApiProperty()
-    @Matches("/^\+?[1-9]\d{1,14}$/")
+    @Matches(/^\+?[1-9]\d{1,14}$/)
     phoneNumber: string;
 
     @ApiProperty()

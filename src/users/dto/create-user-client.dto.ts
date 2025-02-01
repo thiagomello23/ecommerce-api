@@ -20,7 +20,7 @@ export class CreateUserClientDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    @Matches("/^\+?[1-9]\d{1,14}$/")
+    @Matches(/^\+?[1-9]\d{1,14}$/)
     phoneNumber: string;
 
     @ApiProperty()
