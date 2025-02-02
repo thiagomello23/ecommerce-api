@@ -12,7 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const seedService = app.get(SeedService)
   // This will work both in dev and prod environment because create roles, permission and a default admin user
-  seedService.seed()
+  // seedService.seed()
   app.useGlobalPipes(new ValidationPipe({transform: true}))
   
   const jwtAuthGuard = app.get(JwtAuthGuard)

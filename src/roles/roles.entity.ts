@@ -21,5 +21,6 @@ export class Roles {
     users: Users[];
 
     @ManyToMany(() => Permissions, (permissions) => permissions.roles)
+    @JoinTable()
     permissions: Permissions[];
 }

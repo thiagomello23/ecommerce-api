@@ -18,6 +18,5 @@ export class Permissions {
     subject: Subjects;
 
     @ManyToMany(() => Roles, (roles) => roles.permissions)
-    @JoinTable()
     roles: Roles[];
 }
