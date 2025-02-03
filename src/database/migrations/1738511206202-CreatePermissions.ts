@@ -16,7 +16,16 @@ export class CreatePermissions1738511206202 implements MigrationInterface {
             // Validate
             {
                 action: Action.Read,
-                subject: "Validate"
+                subject: "Validate",
+            },
+            {
+                action: Action.Update,
+                subject: "Validate",
+            },
+            // Users
+            {
+                action: Action.Create,
+                subject: "Users",
             }
         ]
         

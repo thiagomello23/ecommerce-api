@@ -35,6 +35,7 @@ export class AuthController {
     }
 
     @Post("signUpVendor")
+    @Public()
     @ApiBody({type: CreateUserVendor})
     async signUpVendor(
         @Body() createUser: CreateUserVendor
@@ -43,7 +44,6 @@ export class AuthController {
     }
 
     @Post("signUpAdmin")
-    @UseGuards(JwtAuthGuard, PoliciesGuard)
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Users"))
     @ApiBody({type: CreateUserClientDto})
     async signUpAdmin(
@@ -53,6 +53,7 @@ export class AuthController {
     }
 
     @Post("login")
+    @Public()
     @ApiBody({type: LoginCredentialsDto})
     async login(
         @Body() loginCredentials: LoginCredentialsDto
@@ -61,6 +62,7 @@ export class AuthController {
     }
 
     @Post("/verify-email-account")
+    @Public()
     @ApiBody({type: EmailVerificationDto})
     async emailVerification(
         @Body() emailVerificationDto: EmailVerificationDto
@@ -69,6 +71,7 @@ export class AuthController {
     }
 
     @Post("/resend-account-verification")
+    @Public()
     @ApiBody({type: ResendEmailVerification})
     async resendAccountVerification(
         @Body() emailVerificationDto: ResendEmailVerification
@@ -77,6 +80,7 @@ export class AuthController {
     }
 
     @Post("/verify-phonenumber-account")
+    @Public()
     @ApiBody({type: PhoneNumberVerification})
     async phoneNumberVerification(
         @Body() phoneNumberVerification: PhoneNumberVerification
@@ -85,6 +89,7 @@ export class AuthController {
     }
 
     @Post("send-resend-phonenumber-verification")
+    @Public()
     @ApiBody({type: SendPhoneNumberVerification})
     async sendOrResendPhoneNumberVerification(
         @Body() sendPhoneNumberVerification: SendPhoneNumberVerification
@@ -95,6 +100,7 @@ export class AuthController {
     // This transforms a normal vendor user into a valid vendor user with the attribute "validVendor"
     // And this action will only be allowed by admin users
     @Post("/validate-user-vendor")
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Validate"))
     @ApiBody({type: ValidateUserVendorDto})
     async validateUserVendor(
         @Body() validateUserVendorDto: ValidateUserVendorDto

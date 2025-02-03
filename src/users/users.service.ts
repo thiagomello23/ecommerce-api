@@ -207,7 +207,7 @@ export class UsersService {
         newAdminUser.verificatedUserEmail = true
         newAdminUser.emailVerificationCode = null
         newAdminUser.verificatedPhoneNumber = true
-        newAdminUser.verificatedPhoneNumber = null
+        newAdminUser.phoneNumberVerificationCode = null
 
         const adminRole = await this.rolesRepository.findOne({
             where: {
