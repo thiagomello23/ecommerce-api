@@ -14,7 +14,7 @@ import { CreateUserVendor } from "src/users/dto/create-user-vendor.dto";
 import { SendPhoneNumberVerification } from "./dto/send-phonenumber-verification.dto";
 import { PhoneNumberVerification } from "./dto/phonenumber-verification.dto";
 import { ValidateUserVendorDto } from "./dto/validate-user-vendor.dto";
-import { ApiBody } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody } from "@nestjs/swagger";
 import { Public } from "./decorators/is-public.decorator";
 
 @Controller("auth")
@@ -45,6 +45,7 @@ export class AuthController {
 
     @Post("signUpAdmin")
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Users"))
+    @ApiBearerAuth()
     @ApiBody({type: CreateUserClientDto})
     async signUpAdmin(
         @Body() createUser: CreateUserClientDto
@@ -101,6 +102,7 @@ export class AuthController {
     // And this action will only be allowed by admin users
     @Post("/validate-user-vendor")
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Validate"))
+    @ApiBearerAuth()
     @ApiBody({type: ValidateUserVendorDto})
     async validateUserVendor(
         @Body() validateUserVendorDto: ValidateUserVendorDto
@@ -110,6 +112,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard, PoliciesGuard)
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, "Validate"))
+    @ApiBearerAuth()
     @Get("validate")
     async validateUser(
         @Req() request
