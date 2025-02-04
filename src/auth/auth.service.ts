@@ -14,6 +14,7 @@ import { SendPhoneNumberVerification } from './dto/send-phonenumber-verification
 import { PhoneNumberVerification } from './dto/phonenumber-verification.dto';
 import { ValidateUserVendorDto } from './dto/validate-user-vendor.dto';
 import { Vendors } from 'src/vendor/vendors.entity';
+import { EmailRecuperationAccount } from './dto/email-recuperation-account.dto';
 
 @Injectable()
 export class AuthService {
@@ -68,7 +69,7 @@ export class AuthService {
         const existingUser = await this.usersRepository
             .createQueryBuilder("users")
             .where("users.email = :email", {email: emailVerificationDto.email})
-            .andWhere("users.verificationCode = :verificationCode", {verificationCode: emailVerificationDto.verificationCode})
+            .andWhere("users.emailVerificationCode = :emailVerificationCode", {emailVerificationCode: emailVerificationDto.verificationCode})
             .getOne()
 
         if(!existingUser) {
@@ -169,6 +170,39 @@ export class AuthService {
                 verificationCode: verificationCode,
                 firstName: existingUser.firstName,
                 lastName: existingUser.lastName
+            }
+        )
+    }
+
+    async forgotPassword(
+        emailRecuperation: EmailRecuperationAccount
+    ){
+        const existingUser = await this.usersRepository
+            .createQueryBuilder("users")
+            .where("users.email = :email", {email: emailRecuperation.email})
+            .getOne()
+
+        if(!existingUser){
+            throw new UnauthorizedException("User not found!")
+        }
+
+        const payload: JwtPayload = {
+            sub: existingUser.id,
+            email: existingUser.email
+        }
+
+        const token = await this.jwtService.signAsync(
+            payload,
+            {secret: process.env.JWT_SECRET, expiresIn: '1h'}
+        )
+
+        return this.messageMs.send(
+            microservicesRMQKey.SEND_EMAIL_RECUPERATION_ACCOUNT,
+            {
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName,
+                email: existingUser.email,
+                token: token
             }
         )
     }
