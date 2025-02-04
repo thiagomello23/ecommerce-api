@@ -15,6 +15,7 @@ import { PhoneNumberVerification } from './dto/phonenumber-verification.dto';
 import { ValidateUserVendorDto } from './dto/validate-user-vendor.dto';
 import { Vendors } from 'src/vendor/vendors.entity';
 import { EmailRecuperationAccount } from './dto/email-recuperation-account.dto';
+import { ResetPassword } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -205,6 +206,15 @@ export class AuthService {
                 token: token
             }
         )
+    }
+
+    async resetPassword(
+        resetPasswordDto: ResetPassword,
+        user: Users // This comes from a JWT token
+    ) {
+        
+
+
     }
 
     async validateUserVendor(

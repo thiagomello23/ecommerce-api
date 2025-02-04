@@ -28,15 +28,18 @@ export class CreateRoles1738511827209 implements MigrationInterface {
         adminRole.permissions = [
             this.getPermission(allP, {action: Action.Create, subject: "Users"}),
             this.getPermission(allP, {action: Action.Update, subject: "Validate"}),
-            this.getPermission(allP, {action: Action.Read, subject: "Validate"})
+            this.getPermission(allP, {action: Action.Read, subject: "Validate"}),
+            this.getPermission(allP, {action: Action.Update, subject: "Users"})
         ]
 
         clientRole.permissions = [
-            this.getPermission(allP, {action: Action.Read, subject: "Validate"})
+            this.getPermission(allP, {action: Action.Read, subject: "Validate"}),
+            this.getPermission(allP, {action: Action.Update, subject: "Users"})
         ]
 
         vendorRole.permissions = [
-            this.getPermission(allP, {action: Action.Read, subject: "Validate"})
+            this.getPermission(allP, {action: Action.Read, subject: "Validate"}),
+            this.getPermission(allP, {action: Action.Update, subject: "Users"})
         ]
 
         await queryRunner.manager.save(Roles, [adminRole, clientRole, vendorRole])

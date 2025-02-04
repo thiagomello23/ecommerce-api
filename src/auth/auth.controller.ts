@@ -17,6 +17,7 @@ import { ValidateUserVendorDto } from "./dto/validate-user-vendor.dto";
 import { ApiBearerAuth, ApiBody } from "@nestjs/swagger";
 import { Public } from "./decorators/is-public.decorator";
 import { EmailRecuperationAccount } from "./dto/email-recuperation-account.dto";
+import { ResetPassword } from "./dto/reset-password.dto";
 
 @Controller("auth")
 export class AuthController {
@@ -99,13 +100,24 @@ export class AuthController {
         return this.authService.sendOrResendPhoneNumberVerification(sendPhoneNumberVerification)
     }
 
-    @Post("forgot-password")
+    @Post("/forgot-password")
     @Public()
     @ApiBody({type: EmailRecuperationAccount})
     async forgotPassword(
         @Body() emailRecuperation: EmailRecuperationAccount
     ) {
         return this.authService.forgotPassword(emailRecuperation)
+    }
+
+    @Post("/reset-password")
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Users"))
+    @ApiBearerAuth()
+    @ApiBody({type: ResetPassword})
+    async resetPassword(
+        @Body() resetPasswordDto: ResetPassword,
+        @Req() request
+    ) {
+        
     }
 
     // This transforms a normal vendor user into a valid vendor user with the attribute "validVendor"

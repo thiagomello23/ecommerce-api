@@ -31,6 +31,10 @@ export class CreateDefaultUser1738595578013 implements MigrationInterface {
         user.roles = [adminRole]
 
         await queryRunner.manager.save(Users, user)
+
+        if(process.env.ENVIRONMENT !== "dev") {
+            return
+        }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

@@ -26,6 +26,10 @@ export class CreatePermissions1738511206202 implements MigrationInterface {
             {
                 action: Action.Create,
                 subject: "Users",
+            },
+            {
+                action: Action.Update,
+                subject: "Users"
             }
         ]
         
