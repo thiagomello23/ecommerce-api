@@ -1,3 +1,4 @@
+import { Expose } from "class-transformer";
 import { Address } from "src/address/address.entity";
 import { Roles } from "src/roles/roles.entity";
 import { Vendors } from "src/vendor/vendors.entity";
@@ -9,19 +10,23 @@ export class Users {
     id: string;
 
     @Column()
+    @Expose()
     firstName: string;
 
     @Column()
+    @Expose()
     lastName: string;
 
     @Column({
         unique: true
     })
+    @Expose()
     email: string;
 
     @Column({
         unique: true
     })
+    @Expose()
     phoneNumber: string;
 
     @Column()

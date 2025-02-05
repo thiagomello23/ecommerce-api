@@ -13,6 +13,7 @@ import { CreateUserVendor } from './dto/create-user-vendor.dto';
 import { Vendors } from 'src/vendor/vendors.entity';
 import { VendorsService } from 'src/vendor/vendors.service';
 import { AddressService } from 'src/address/address.service';
+import { plainToClass, plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -32,8 +33,6 @@ export class UsersService {
 
     // By default creates a user with just "USER" role
     async createClientUser(createUser: CreateUserClientDto) {
-        const newUser = new Users();
-
         const existingUser = await this.usersRepository
             .createQueryBuilder("users")
             .where("users.phoneNumber = :phoneNumber", {phoneNumber: createUser.phoneNumber})
@@ -44,12 +43,10 @@ export class UsersService {
             throw new BadRequestException("User email or phone number already beeing used;")
         }
 
+        const newUser = plainToInstance(Users, createUser, {excludeExtraneousValues: true})
+
         const criptPassword = await bcrypt.hash(createUser.password, +process.env.BCRYPT_SALT)
 
-        newUser.firstName = createUser.firstName
-        newUser.lastName = createUser.lastName
-        newUser.email = createUser.email
-        newUser.phoneNumber = createUser.phoneNumber
         newUser.password = criptPassword
         newUser.verificatedUserEmail = false;
         newUser.emailVerificationCode = generateVerificationCode()
