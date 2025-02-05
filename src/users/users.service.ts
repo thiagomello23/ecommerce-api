@@ -178,8 +178,6 @@ export class UsersService {
 
     // For admins are not need for email verification
     async createAdminUser(createAdminUser: CreateUserClientDto) {
-        const newAdminUser = new Users();
-
         const existingUser = await this.usersRepository
             .createQueryBuilder("users")
             .where("users.phoneNumber = :phoneNumber", {phoneNumber: createAdminUser.phoneNumber})
@@ -190,12 +188,10 @@ export class UsersService {
             throw new BadRequestException("User email or phone number already beeing used;")
         }
 
+        const newAdminUser = plainToInstance(Users, createAdminUser, {excludeExtraneousValues: true})
+
         const criptPassword = await bcrypt.hash(createAdminUser.password, +process.env.BCRYPT_SALT)
 
-        newAdminUser.firstName = createAdminUser.firstName
-        newAdminUser.lastName = createAdminUser.lastName
-        newAdminUser.email = createAdminUser.email
-        newAdminUser.phoneNumber = createAdminUser.phoneNumber
         newAdminUser.password = criptPassword
         newAdminUser.verificatedUserEmail = true
         newAdminUser.emailVerificationCode = null
