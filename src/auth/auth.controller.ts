@@ -14,11 +14,12 @@ import { CreateUserVendor } from "src/users/dto/create-user-vendor.dto";
 import { SendPhoneNumberVerification } from "./dto/send-phonenumber-verification.dto";
 import { PhoneNumberVerification } from "./dto/phonenumber-verification.dto";
 import { ValidateUserVendorDto } from "./dto/validate-user-vendor.dto";
-import { ApiBearerAuth, ApiBody, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Public } from "./decorators/is-public.decorator";
 import { EmailRecuperationAccount } from "./dto/email-recuperation-account.dto";
 import { ResetPassword } from "./dto/reset-password.dto";
 
+@ApiTags("auth")
 @Controller("auth")
 export class AuthController {
 

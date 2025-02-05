@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { Users } from './users.entity';
 import { DatabaseRepositoryConstants, microservicesRMQKey } from 'src/constants';
@@ -207,5 +207,43 @@ export class UsersService {
         newAdminUser.roles = [adminRole]
 
         return this.usersRepository.save(newAdminUser)
+    }
+
+    async deleteClientUser(user: Users){
+        const vendorRole = user.roles?.filter((r) => r.role === UserRole.VENDOR)
+        const adminRole = user.roles?.filter((r) => r.role === UserRole.ADMIN)
+
+        if(vendorRole || adminRole) {
+            throw new UnauthorizedException("Only clients user could be deleted!")
+        }
+
+        const queryRunner = this.dataSource.createQueryRunner()
+
+        try {
+            await queryRunner.connect()
+            await queryRunner.startTransaction()
+
+            user.email = `DELETED_${Date.now()}_${user.email}`
+
+            await queryRunner.manager.save(Users, user)
+
+            await queryRunner.manager
+                .getRepository(Users)
+                .createQueryBuilder("users")
+                .softDelete()
+                .where("users.id = :id", {id: user.id})
+                .execute()
+
+            await queryRunner.commitTransaction()
+        } catch(err) {
+            await queryRunner.rollbackTransaction()
+            throw err;
+        } finally {
+            await queryRunner.release()
+        }
+
+        return {
+            message: "User deleted with success!"
+        }
     }
 }
