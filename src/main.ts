@@ -25,6 +25,7 @@ async function bootstrap() {
   .setTitle('E-commerce api')
   .setDescription('E-commerce simulation api')
   .setVersion('1.0')
+  .addBearerAuth()
   .build();
 
   const options: SwaggerDocumentOptions = {
