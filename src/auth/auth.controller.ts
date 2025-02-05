@@ -117,7 +117,7 @@ export class AuthController {
         @Body() resetPasswordDto: ResetPassword,
         @Req() request
     ) {
-        
+        return this.authService.resetPassword(resetPasswordDto, request.user)
     }
 
     // This transforms a normal vendor user into a valid vendor user with the attribute "validVendor"

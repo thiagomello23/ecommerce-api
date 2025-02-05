@@ -212,9 +212,12 @@ export class AuthService {
         resetPasswordDto: ResetPassword,
         user: Users // This comes from a JWT token
     ) {
-        
+        // Not necessary validating user because JwtStrategy does that to me
+        const newPassword = await bcrypt.hash(resetPasswordDto.newPassword, process.env.BCRYPT_SALT)
 
+        user.password = newPassword
 
+        return this.usersRepository.save(user)
     }
 
     async validateUserVendor(
