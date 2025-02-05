@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BusinessType } from "./enums/business-type.enum";
 import { Users } from "src/users/users.entity";
+import { Expose } from "class-transformer";
 
 @Entity()
 export class Vendors {
@@ -10,17 +11,20 @@ export class Vendors {
     @Column({
         unique: true
     })
+    @Expose()
     businessName: string;
 
     @Column({
         type: "enum",
         enum: BusinessType
     })
+    @Expose()
     businessType: string;
 
     @Column({
         unique: true
     })
+    @Expose()
     registrationNumber: string;
 
     @Column({

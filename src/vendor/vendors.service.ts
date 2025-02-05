@@ -3,6 +3,7 @@ import { DatabaseRepositoryConstants } from "src/constants";
 import { Repository } from "typeorm";
 import { Vendors } from "./vendors.entity";
 import { CreateVendor } from "./dto/create-vendor.dto";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class VendorsService {
@@ -13,7 +14,6 @@ export class VendorsService {
     ){}
 
     async createVendor(createVendorDto: CreateVendor) {
-        const newVendor = new Vendors()
         // Validate vendor data like business name and registration number
         const existingVendor = await this.vendorsRepository
                                     .createQueryBuilder("vendors")
@@ -25,9 +25,8 @@ export class VendorsService {
             throw new UnauthorizedException("Vendor registration number or business name was already been used!")
         }
 
-        newVendor.businessName = createVendorDto.businessName.toUpperCase()
-        newVendor.businessType = createVendorDto.businessType
-        newVendor.registrationNumber = createVendorDto.registrationNumber
+        const newVendor = plainToInstance(Vendors, createVendorDto, {excludeExtraneousValues: true})
+        
         newVendor.validVendor = false
 
         // For now i will just do that until i decide how to work with transactions

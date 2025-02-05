@@ -7,6 +7,7 @@ import { Users } from "src/users/users.entity";
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom, map } from "rxjs";
 import axios from "axios";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class AddressService {
@@ -20,16 +21,7 @@ export class AddressService {
     ){}
 
     async mapAddressWithoutUser(createAddressDto: CreateAddressDto) {
-        const address = new Address()
-
-        address.city = createAddressDto.city;
-        address.country = createAddressDto.country;
-        address.district = createAddressDto.district;
-        address.houseNumber = createAddressDto.houseNumber;
-        address.locationReference = createAddressDto.locationReference;
-        address.postalCode = createAddressDto.postalCode;
-        address.state = createAddressDto.state;
-        address.street = createAddressDto.street;
+        const address = plainToInstance(Address, createAddressDto, {excludeExtraneousValues: true})
 
         return address
     }

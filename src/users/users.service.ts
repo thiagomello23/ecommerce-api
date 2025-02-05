@@ -92,8 +92,6 @@ export class UsersService {
     }
 
     async createVendorUser(createVendorUser: CreateUserVendor) {
-        const newVendorUser = new Users()
-
         const existingUser = await this.usersRepository
             .createQueryBuilder("users")
             .where("users.phoneNumber = :phoneNumber", {phoneNumber: createVendorUser.phoneNumber})
@@ -104,12 +102,10 @@ export class UsersService {
             throw new BadRequestException("User email or phone number already beeing used;")
         }
 
+        const newVendorUser = plainToInstance(Users, createVendorUser, {excludeExtraneousValues: true})
+
         const criptPassword = await bcrypt.hash(createVendorUser.password, +process.env.BCRYPT_SALT)
 
-        newVendorUser.firstName = createVendorUser.firstName
-        newVendorUser.lastName = createVendorUser.lastName
-        newVendorUser.email = createVendorUser.email
-        newVendorUser.phoneNumber = createVendorUser.phoneNumber
         newVendorUser.password = criptPassword
         newVendorUser.verificatedUserEmail = false;
         newVendorUser.emailVerificationCode = generateVerificationCode()
