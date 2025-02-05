@@ -1,14 +1,12 @@
 import { Expose } from "class-transformer";
 import { Address } from "src/address/address.entity";
+import { BaseEntity } from "src/database/base-entity.entity";
 import { Roles } from "src/roles/roles.entity";
 import { Vendors } from "src/vendor/vendors.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Users {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
+export class Users extends BaseEntity{
     @Column()
     @Expose()
     firstName: string;
@@ -40,10 +38,6 @@ export class Users {
     // Verified phoneNumber in order to be a valid vendor
     @Column({default: false})
     verificatedPhoneNumber: boolean;
-
-    @Column({nullable: true})
-    @CreateDateColumn({ type: 'timestamp' })
-    createdAt: string;
 
     @Column({nullable: true})
     emailVerificationCode: string;

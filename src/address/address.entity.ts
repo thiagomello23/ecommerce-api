@@ -1,9 +1,10 @@
 import { Expose } from "class-transformer";
+import { BaseEntity } from "src/database/base-entity.entity";
 import { Users } from "src/users/users.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Address {
+export class Address extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 

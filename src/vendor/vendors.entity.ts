@@ -2,9 +2,10 @@ import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "ty
 import { BusinessType } from "./enums/business-type.enum";
 import { Users } from "src/users/users.entity";
 import { Expose } from "class-transformer";
+import { BaseEntity } from "src/database/base-entity.entity";
 
 @Entity()
-export class Vendors {
+export class Vendors extends BaseEntity{
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
