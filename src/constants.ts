@@ -24,3 +24,6 @@ export const microservicesRMQKey = {
 export const googleUrlKeys = {
     addressValidationAPI: "https://addressvalidation.googleapis.com/v1:validateAddress"
 }
+
+export const validMimeTypesForFiles = ["png", "jpg", "jpeg", "webp", "svg"]
+export const maxFileSize = 10000000

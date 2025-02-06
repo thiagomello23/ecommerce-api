@@ -14,6 +14,8 @@ import { Vendors } from 'src/vendor/vendors.entity';
 import { VendorsService } from 'src/vendor/vendors.service';
 import { AddressService } from 'src/address/address.service';
 import { plainToClass, plainToInstance } from 'class-transformer';
+import { FilesService } from 'src/files/files.service';
+import { UpdateUserProfile } from './dto/update-user-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +30,8 @@ export class UsersService {
         @Inject(DatabaseRepositoryConstants.dataSource)
         private readonly dataSource: DataSource,
         private readonly vendorsService: VendorsService,
-        private readonly addressService: AddressService
+        private readonly addressService: AddressService,
+        private readonly filesService: FilesService
     ){}
 
     // By default creates a user with just "USER" role
@@ -282,5 +285,13 @@ export class UsersService {
         return {
             message: "Vendor deleted with success!"
         }
+    }
+
+    async updateUserProfile(
+        updateUserProfileDto: UpdateUserProfile, 
+        user: Users
+    ) {
+        // Verify if user objects exists
+        // Upload file
     }
 }
