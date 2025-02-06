@@ -246,4 +246,41 @@ export class UsersService {
             message: "User deleted with success!"
         }
     }
+
+    async deleteVendorUser(user: Users) {
+        const vendorRole = user.roles?.filter((r) => r.role === UserRole.VENDOR)
+
+        if(!vendorRole) {
+            throw new UnauthorizedException("Only vendors could be deleted!")
+        }
+
+        const queryRunner = this.dataSource.createQueryRunner()
+
+        try {
+            await queryRunner.connect()
+            await queryRunner.startTransaction()
+
+            user.email = `DELETED_${Date.now()}_${user.email}`
+
+            await queryRunner.manager.save(Users, user)
+
+            await queryRunner.manager
+                .getRepository(Users)
+                .createQueryBuilder("users")
+                .softDelete()
+                .where("users.id = :id", {id: user.id})
+                .execute()
+
+            await queryRunner.commitTransaction()
+        } catch(err) {
+            await queryRunner.rollbackTransaction()
+            throw err;
+        } finally {
+            await queryRunner.release()
+        }
+
+        return {
+            message: "Vendor deleted with success!"
+        }
+    }
 }

@@ -22,4 +22,16 @@ export class UsersControllers {
         const user = request.user
         return this.usersService.deleteClientUser(user)
     }
+
+    // For now is equals to a normal user delete, but forward this will have some extra
+    // validations for this to work
+    @Delete("delete/vendors")
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, "Users"))
+    @ApiBearerAuth()
+    async deleteVendorUser(
+        @Req() request
+    ) { 
+        // const user = request.user
+        // return this.usersService.deleteVendorUser(user)
+    }
 }
