@@ -1,7 +1,7 @@
-import { BadRequestException, forwardRef, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { CreateAddressDto } from "./dto/create-address.dto";
 import { DatabaseRepositoryConstants, googleUrlKeys } from "src/constants";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Address } from "./address.entity";
 import { Users } from "src/users/users.entity";
 import { HttpService } from "@nestjs/axios";
@@ -17,12 +17,48 @@ export class AddressService {
         private readonly addressRepository: Repository<Address>,
         @Inject(DatabaseRepositoryConstants.usersRepository)
         private readonly usersRepository: Repository<Users>,
-        private readonly httpService: HttpService
+        private readonly httpService: HttpService,
+        @Inject(DatabaseRepositoryConstants.dataSource)
+        private readonly dataSource: DataSource,
     ){}
 
     async createNewAddress(createAddressDto: CreateAddressDto, user: Users) {
-        console.log(createAddressDto)
-        console.log(user)
+        const countAddress = await this.addressRepository
+            .createQueryBuilder("address")
+            .where("address.user.id = :id", {id: user.id})
+            .getCount()
+
+        if(countAddress >= +process.env.MAX_LIMIT_ADDRESSES) {
+            throw new UnauthorizedException("Max address limit register, please remove some address to create new ones!")
+        }
+
+        const address = plainToInstance(Address, createAddressDto, {excludeExtraneousValues: true})
+        address.user = user
+
+        const validationAddress = await this.validateAddress(address)
+
+        if(!validationAddress) {
+            throw new BadRequestException("Invalid address!")
+        }
+
+        const queryRunner = this.dataSource.createQueryRunner()
+        let createdAddress;
+
+        try {
+            await queryRunner.connect()
+            await queryRunner.startTransaction()
+
+            createdAddress = await queryRunner.manager.save(Address, address)
+
+            await queryRunner.commitTransaction()
+        } catch(err) {
+            await queryRunner.rollbackTransaction()
+            throw err;
+        } finally {
+            await queryRunner.release()
+        }
+
+        return createdAddress
     }
 
     async mapAddressWithoutUser(createAddressDto: CreateAddressDto) {
