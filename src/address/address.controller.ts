@@ -1,11 +1,12 @@
 import { Body, Controller, Post, Req } from "@nestjs/common";
 import { AddressService } from "./address.service";
-import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateAddressDto } from "./dto/create-address.dto";
 import { AppAbility } from "src/casl/casl-ability.factory";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
 import { Action } from "src/casl/enums/casl-action";
 import { Users } from "src/users/users.entity";
+import { Address } from "./address.entity";
 
 @ApiTags("address")
 @Controller("address")
@@ -18,6 +19,8 @@ export class AddressController {
     @Post()
     @ApiBearerAuth()
     @ApiBody({type: CreateAddressDto})
+    @ApiResponse({status: 401, description: "Max address limit register, please remove some address to create new ones!"})
+    @ApiResponse({status: 200, type: Address})
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Address"))
     async createNewAddress(
         @Body() createAddressDto: CreateAddressDto,
