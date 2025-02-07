@@ -30,19 +30,26 @@ export class CreateRoles1738511827209 implements MigrationInterface {
             this.getPermission(allP, {action: Action.Update, subject: "Validate"}),
             this.getPermission(allP, {action: Action.Read, subject: "Validate"}),
             this.getPermission(allP, {action: Action.Update, subject: "Users"}),
-            this.getPermission(allP, {action: Action.Delete, subject: "Users"})
+            this.getPermission(allP, {action: Action.Delete, subject: "Users"}),
+            this.getPermission(allP, {action: Action.Read, subject: "Address"}),
         ]
 
         clientRole.permissions = [
             this.getPermission(allP, {action: Action.Read, subject: "Validate"}),
             this.getPermission(allP, {action: Action.Update, subject: "Users"}),
-            this.getPermission(allP, {action: Action.Delete, subject: "Users"})
+            this.getPermission(allP, {action: Action.Delete, subject: "Users"}),
+            this.getPermission(allP, {action: Action.Create, subject: "Address"}),
+            this.getPermission(allP, {action: Action.Update, subject: "Address"}),
+            this.getPermission(allP, {action: Action.Delete, subject: "Address"}),
         ]
 
         vendorRole.permissions = [
             this.getPermission(allP, {action: Action.Read, subject: "Validate"}),
             this.getPermission(allP, {action: Action.Update, subject: "Users"}),
-            this.getPermission(allP, {action: Action.Delete, subject: "Users"})
+            this.getPermission(allP, {action: Action.Delete, subject: "Users"}),
+            this.getPermission(allP, {action: Action.Create, subject: "Address"}),
+            this.getPermission(allP, {action: Action.Update, subject: "Address"}),
+            this.getPermission(allP, {action: Action.Delete, subject: "Address"}),
         ]
 
         await queryRunner.manager.save(Roles, [adminRole, clientRole, vendorRole])

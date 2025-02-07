@@ -1,0 +1,29 @@
+import { Body, Controller, Post, Req } from "@nestjs/common";
+import { AddressService } from "./address.service";
+import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
+import { CreateAddressDto } from "./dto/create-address.dto";
+import { AppAbility } from "src/casl/casl-ability.factory";
+import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
+import { Action } from "src/casl/enums/casl-action";
+import { Users } from "src/users/users.entity";
+
+@ApiTags("address")
+@Controller("address")
+export class AddressController {
+
+    constructor(
+        private readonly addressSerivce: AddressService
+    ){}
+
+    @Post()
+    @ApiBearerAuth()
+    @ApiBody({type: CreateAddressDto})
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Address"))
+    async createNewAddress(
+        @Body() createAddressDto: CreateAddressDto,
+        @Req() request
+    ) {
+        const user: Users = request.user
+        return this.addressSerivce.createNewAddress(createAddressDto, user)
+    }
+}

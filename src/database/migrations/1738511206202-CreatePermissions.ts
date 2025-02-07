@@ -35,6 +35,23 @@ export class CreatePermissions1738511206202 implements MigrationInterface {
                 action: Action.Delete,
                 subject: "Users"
             },
+            // Address
+            {
+                action: Action.Create,
+                subject: "Address",
+            },
+            {
+                action: Action.Read,
+                subject: "Address",
+            },
+            {
+                action: Action.Delete,
+                subject: "Address",
+            },
+            {
+                action: Action.Update,
+                subject: "Address",
+            },
         ]
         
         await queryRunner.manager.save(Permissions, [...permissions])

@@ -20,6 +20,11 @@ export class AddressService {
         private readonly httpService: HttpService
     ){}
 
+    async createNewAddress(createAddressDto: CreateAddressDto, user: Users) {
+        console.log(createAddressDto)
+        console.log(user)
+    }
+
     async mapAddressWithoutUser(createAddressDto: CreateAddressDto) {
         const address = plainToInstance(Address, createAddressDto, {excludeExtraneousValues: true})
 
