@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Storage } from "@google-cloud/storage";
+import { googleStorageEndpoint, googleStorageProfileFolder } from "src/constants";
 
 @Injectable()
 export class FilesService {
@@ -9,9 +10,13 @@ export class FilesService {
             projectId: process.env.GCP_PROJECT_ID
         })
 
-        return storage.bucket(process.env.GCP_BUCKET_NAME)
+        await storage.bucket(process.env.GCP_BUCKET_NAME)
             .file("profilePicture/" + file.filename)
             .save(file.buffer, {public: true})
+
+        return {
+            publicUrl: `${googleStorageEndpoint}${process.env.GCP_BUCKET_NAME}/${googleStorageProfileFolder + file.filename}`
+        }
     }
 
 }

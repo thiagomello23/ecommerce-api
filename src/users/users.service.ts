@@ -291,7 +291,31 @@ export class UsersService {
         updateUserProfileDto: UpdateUserProfile, 
         user: Users
     ) {
-        // Verify if user objects exists
-        // Upload file
+        const queryRunner = this.dataSource.createQueryRunner()
+
+        try {
+            await queryRunner.connect()
+            await queryRunner.startTransaction()
+
+            user.firstName = updateUserProfileDto?.firstName ? updateUserProfileDto?.firstName : user.firstName
+            user.lastName = updateUserProfileDto?.lastName ? updateUserProfileDto?.lastName : user.lastName
+    
+            if(updateUserProfileDto?.file?.filename) {
+                const {publicUrl} = await this.filesService.fileUploadGCP(updateUserProfileDto.file)
+                user.profilePictureIdName = updateUserProfileDto.file.filename
+                user.profilePictureUrl = publicUrl
+            }
+
+            await queryRunner.manager.save(user)
+
+            await queryRunner.commitTransaction()
+        } catch(err) {
+            await queryRunner.rollbackTransaction()
+            throw err;
+        } finally {
+            if(!queryRunner.isReleased){
+                await queryRunner.release()
+            }
+        }
     }
 }

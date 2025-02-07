@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, ParseFilePipe, ParseFilePipeBuilder, Patch, Req, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { Action } from "src/casl/enums/casl-action";
 import { AppAbility } from "src/casl/casl-ability.factory";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
@@ -23,7 +23,7 @@ export class UsersControllers {
 
     @Patch("profile")
     @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Users"))
-    // @Public() // For testing
+    @ApiBody({type: UpdateUserProfile})
     @ApiBearerAuth()
     @UseInterceptors(FileInterceptor("profilePic"))
     async updateUserProfile(

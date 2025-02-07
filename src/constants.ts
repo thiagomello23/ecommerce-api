@@ -21,6 +21,10 @@ export const microservicesRMQKey = {
     SEND_EMAIL_RECUPERATION_ACCOUNT: "SEND_EMAIL_RECUPERATION_ACCOUNT"
 }
 
+export const googleStorageEndpoint = "https://storage.googleapis.com/"
+
+export const googleStorageProfileFolder = "profilePicture/"
+
 export const googleUrlKeys = {
     addressValidationAPI: "https://addressvalidation.googleapis.com/v1:validateAddress"
 }

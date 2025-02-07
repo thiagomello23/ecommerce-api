@@ -30,6 +30,12 @@ export class Users extends BaseEntity{
     @Column()
     password: string;
 
+    @Column({nullable: true})
+    profilePictureIdName: string;
+    
+    @Column({nullable: true})
+    profilePictureUrl: string;
+
     // For all accounts email verification is necessary to login
     @Column({default: false})
     verificatedUserEmail: boolean

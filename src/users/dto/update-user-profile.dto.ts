@@ -1,11 +1,19 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class UpdateUserProfile {
 
     @IsString()
     @IsOptional()
-    name: string;
+    @ApiProperty()
+    firstName: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiProperty()
+    lastName: string;
 
     @IsOptional()
+    @ApiProperty()
     file: Express.Multer.File
 }
