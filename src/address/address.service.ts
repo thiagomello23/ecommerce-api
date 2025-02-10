@@ -63,6 +63,16 @@ export class AddressService {
         return createdAddress
     }
 
+    async getAllUserAddress(
+        user: Users
+    ) {
+        return this.addressRepository
+            .createQueryBuilder("address")
+            .where("address.userId = :userId", {userId: user.id})
+            .orderBy("address.createdAt")
+            .getMany()
+    }
+
     async makeDefaultAddress(
         addressId: string,
         user: Users

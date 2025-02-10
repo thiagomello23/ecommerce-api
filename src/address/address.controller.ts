@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Patch, Post, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from "@nestjs/common";
 import { AddressService } from "./address.service";
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateAddressDto } from "./dto/create-address.dto";
@@ -29,6 +29,16 @@ export class AddressController {
     ) {
         const user: Users = request.user
         return this.addressService.createNewAddress(createAddressDto, user)
+    }
+
+    @Get()
+    @ApiBearerAuth()
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, "Address"))
+    async getAllUserAddress(
+        @Req() request
+    ) {
+        const user: Users = request.user
+        return this.addressService.getAllUserAddress(user)
     }
 
     @Patch("/default/:addressId")
