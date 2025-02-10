@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, Post, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Param, Patch, Post, Req } from "@nestjs/common";
 import { AddressService } from "./address.service";
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateAddressDto } from "./dto/create-address.dto";
@@ -40,5 +40,16 @@ export class AddressController {
     ) {
         const user: Users = request.user
         return this.addressService.makeDefaultAddress(addressId, user)
+    }
+
+    @Delete("/delete/:addressId")
+    @ApiBearerAuth()
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, "Address"))
+    async deleteAddress(
+        @Param("addressId") addressId: string,
+        @Req() request
+    ) {
+        const user: Users = request.user
+        return this.addressService.deleteAddress(addressId, user)
     }
 }

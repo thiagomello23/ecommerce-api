@@ -85,6 +85,18 @@ export class AddressService {
         return this.addressRepository.save(existingAddress)
     }
 
+    async deleteAddress(
+        addressId: string,
+        user: Users
+    ){
+        return this.addressRepository
+            .createQueryBuilder("address")
+            .softDelete()
+            .where("id = :addressId", {addressId})
+            .andWhere("userId = :userId", {userId: user.id})
+            .execute()
+    }
+
     async mapAddressWithoutUser(createAddressDto: CreateAddressDto) {
         const address = plainToInstance(Address, createAddressDto, {excludeExtraneousValues: true})
 
