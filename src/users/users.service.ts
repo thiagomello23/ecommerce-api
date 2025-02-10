@@ -152,6 +152,8 @@ export class UsersService {
                 throw new BadRequestException("Invalid Address!")
             }
 
+            mappedAddress.defaultAddress = createVendorUser.address.defaultAddress
+
             // Save address
             mappedAddress.user = newVendorUser
             await queryRunner.manager.save(mappedAddress)

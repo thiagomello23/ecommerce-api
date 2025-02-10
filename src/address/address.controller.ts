@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req } from "@nestjs/common";
+import { Body, Controller, Param, Patch, Post, Req } from "@nestjs/common";
 import { AddressService } from "./address.service";
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateAddressDto } from "./dto/create-address.dto";
@@ -7,13 +7,14 @@ import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
 import { Action } from "src/casl/enums/casl-action";
 import { Users } from "src/users/users.entity";
 import { Address } from "./address.entity";
+import { Public } from "src/auth/decorators/is-public.decorator";
 
 @ApiTags("address")
 @Controller("address")
 export class AddressController {
 
     constructor(
-        private readonly addressSerivce: AddressService
+        private readonly addressService: AddressService
     ){}
 
     @Post()
@@ -27,6 +28,17 @@ export class AddressController {
         @Req() request
     ) {
         const user: Users = request.user
-        return this.addressSerivce.createNewAddress(createAddressDto, user)
+        return this.addressService.createNewAddress(createAddressDto, user)
+    }
+
+    @Patch("/default/:addressId")
+    @ApiBearerAuth()
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Address"))
+    async makeDefaultAddress(
+        @Param("addressId") addressId: string,
+        @Req() request
+    ) {
+        const user: Users = request.user
+        return this.addressService.makeDefaultAddress(addressId, user)
     }
 }

@@ -48,6 +48,11 @@ export class Address extends BaseEntity {
     @Expose()
     locationReference: string;
 
+    @Column({
+        default: false
+    })
+    defaultAddress: boolean;
+
     @ApiProperty()
     @Column()
     @Expose()

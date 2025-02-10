@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsPostalCode, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsOptional, IsPostalCode, IsString } from "class-validator";
 
 export class CreateAddressDto {
 
@@ -35,6 +35,11 @@ export class CreateAddressDto {
     @ApiProperty()
     @IsString()
     locationReference: string;
+
+    @ApiProperty()
+    @IsBoolean()
+    @IsOptional()
+    defaultAddress: boolean = false;
 
     // Just a simple validation for zipcode
     @ApiProperty()

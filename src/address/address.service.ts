@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { CreateAddressDto } from "./dto/create-address.dto";
 import { DatabaseRepositoryConstants, googleUrlKeys } from "src/constants";
 import { DataSource, Repository } from "typeorm";
@@ -41,6 +41,8 @@ export class AddressService {
             throw new BadRequestException("Invalid address!")
         }
 
+        address.defaultAddress = createAddressDto.defaultAddress
+
         const queryRunner = this.dataSource.createQueryRunner()
         let createdAddress;
 
@@ -59,6 +61,28 @@ export class AddressService {
         }
 
         return createdAddress
+    }
+
+    async makeDefaultAddress(
+        addressId: string,
+        user: Users
+    ){
+        const existingAddress = await this.addressRepository.findOne({
+            where: {
+                id: addressId,
+                user: {
+                    id: user.id
+                }
+            }
+        })
+
+        if(!existingAddress) {
+            throw new NotFoundException("Address not found!")
+        }
+
+        existingAddress.defaultAddress = true
+
+        return this.addressRepository.save(existingAddress)
     }
 
     async mapAddressWithoutUser(createAddressDto: CreateAddressDto) {
