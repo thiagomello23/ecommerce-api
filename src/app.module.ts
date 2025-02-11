@@ -6,13 +6,13 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
 import { RolesModule } from './roles/roles.module';
-import { SeedModule } from './seed/seed.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { microservicesRMQKey } from './constants';
 import { RmqModule } from './rmq/rmq.module';
 import { VendorsModule } from './vendor/vendors.module';
 import { AddressModule } from './address/address.module';
+import { Categories } from './categories/categories.entity';
 
 @Module({
   imports: [
@@ -27,11 +27,11 @@ import { AddressModule } from './address/address.module';
     AuthModule,
     CaslModule,
     RolesModule,
-    SeedModule,
     PermissionsModule,
     RmqModule,
     VendorsModule,
-    AddressModule
+    AddressModule,
+    Categories
   ],
   controllers: [],
   providers: [],
