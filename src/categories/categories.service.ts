@@ -27,4 +27,10 @@ export class CategoriesService {
 
         return this.categoriesRepository.save(category)
     }
+
+    async getAllCategories() {
+        return this.categoriesRepository
+            .createQueryBuilder("categories")
+            .getMany()
+    }
 }
