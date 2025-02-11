@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { Categories } from "./categories.entity";
 import { DatabaseRepositoryConstants } from "src/constants";
@@ -18,6 +18,13 @@ export class CategoriesService {
             .where("categories.name = :categoryName", {categoryName: createCategoryDto.name})
             .getOne()
 
-        console.log(existingCategory)
+        if(existingCategory) {
+            throw new BadRequestException("This category already exists!")
+        }
+
+        const category = new Categories()
+        category.name = createCategoryDto.name
+
+        return this.categoriesRepository.save(category)
     }
 }

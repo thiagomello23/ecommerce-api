@@ -25,10 +25,9 @@ export class CategoriesController {
         return this.categoriesService.createCategory(createCategoryDto)
     }
 
-
     @Get()
     @Public()
-    async get() {
+    async getAllCategories() {
 
     }
 }
