@@ -12,7 +12,7 @@ import { microservicesRMQKey } from './constants';
 import { RmqModule } from './rmq/rmq.module';
 import { VendorsModule } from './vendor/vendors.module';
 import { AddressModule } from './address/address.module';
-import { Categories } from './categories/categories.entity';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { Categories } from './categories/categories.entity';
     RmqModule,
     VendorsModule,
     AddressModule,
-    Categories
+    CategoriesModule
   ],
   controllers: [],
   providers: [],

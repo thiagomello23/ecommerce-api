@@ -13,6 +13,11 @@ export class CategoriesService {
     ){}
 
     async createCategory(createCategoryDto: CreateCategoryDto) {
-        console.log(createCategoryDto)
+        const existingCategory = await this.categoriesRepository
+            .createQueryBuilder("categories")
+            .where("categories.name = :categoryName", {categoryName: createCategoryDto.name})
+            .getOne()
+
+        console.log(existingCategory)
     }
 }
