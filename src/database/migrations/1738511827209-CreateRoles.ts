@@ -32,6 +32,8 @@ export class CreateRoles1738511827209 implements MigrationInterface {
             this.getPermission(allP, {action: Action.Update, subject: "Users"}),
             this.getPermission(allP, {action: Action.Delete, subject: "Users"}),
             this.getPermission(allP, {action: Action.Read, subject: "Address"}),
+            this.getPermission(allP, {action: Action.Create, subject: "Category"}),
+            this.getPermission(allP, {action: Action.Read, subject: "Category"}),
         ]
 
         clientRole.permissions = [
@@ -42,6 +44,7 @@ export class CreateRoles1738511827209 implements MigrationInterface {
             this.getPermission(allP, {action: Action.Update, subject: "Address"}),
             this.getPermission(allP, {action: Action.Delete, subject: "Address"}),
             this.getPermission(allP, {action: Action.Read, subject: "Address"}),
+            this.getPermission(allP, {action: Action.Read, subject: "Category"}),
         ]
 
         vendorRole.permissions = [
@@ -52,6 +55,7 @@ export class CreateRoles1738511827209 implements MigrationInterface {
             this.getPermission(allP, {action: Action.Update, subject: "Address"}),
             this.getPermission(allP, {action: Action.Delete, subject: "Address"}),
             this.getPermission(allP, {action: Action.Read, subject: "Address"}),
+            this.getPermission(allP, {action: Action.Read, subject: "Category"}),
         ]
 
         await queryRunner.manager.save(Roles, [adminRole, clientRole, vendorRole])
