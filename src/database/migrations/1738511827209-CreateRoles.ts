@@ -34,6 +34,7 @@ export class CreateRoles1738511827209 implements MigrationInterface {
             this.getPermission(allP, {action: Action.Read, subject: "Address"}),
             this.getPermission(allP, {action: Action.Create, subject: "Category"}),
             this.getPermission(allP, {action: Action.Read, subject: "Category"}),
+            this.getPermission(allP, {action: Action.Delete, subject: "Category"}),
         ]
 
         clientRole.permissions = [

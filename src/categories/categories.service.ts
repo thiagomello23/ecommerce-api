@@ -33,4 +33,18 @@ export class CategoriesService {
             .createQueryBuilder("categories")
             .getMany()
     }
+
+    async deleteCategory(
+        categoryId: string
+    ) {
+        try {
+            return this.categoriesRepository
+                .createQueryBuilder("categories")
+                .softDelete()
+                .where("id = :categoryId", {categoryId})
+                .execute()
+        } catch(err) {
+            throw new BadRequestException("Failed to delete a category, invalid category ID!")
+        }
+    }
 }

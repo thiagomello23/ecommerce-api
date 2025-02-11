@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CategoriesService } from "./categories.service";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
@@ -29,7 +29,17 @@ export class CategoriesController {
 
     @Get("all")
     @Public()
+    @ApiResponse({status: 200, type: Array<Categories>})
     async getAllCategories() {
         return this.categoriesService.getAllCategories()
+    }
+
+    @Delete("delete/:categoryId")
+    @ApiResponse({status: 400, description: "Failed to delete a category, invalid category ID!"})
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, "Category"))
+    async deleteCategory(
+        @Param("categoryId") categoryId: string
+    ) {
+        return this.categoriesService.deleteCategory(categoryId)
     }
 }
