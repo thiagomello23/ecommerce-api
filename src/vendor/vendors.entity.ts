@@ -1,8 +1,9 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BusinessType } from "./enums/business-type.enum";
 import { Users } from "src/users/users.entity";
 import { Expose } from "class-transformer";
 import { BaseEntity } from "src/database/base-entity.entity";
+import { Products } from "src/products/products.entity";
 
 @Entity()
 export class Vendors extends BaseEntity{
@@ -36,4 +37,7 @@ export class Vendors extends BaseEntity{
     @OneToOne(() => Users, (user) => user.vendors) // specify inverse side as a second parameter
     @JoinColumn()
     user: Users
+
+    @OneToMany(() => Products, (products) => products.vendor)
+    products: Products[]
 }

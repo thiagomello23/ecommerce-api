@@ -1,6 +1,7 @@
 import { Categories } from "src/categories/categories.entity";
 import { BaseEntity } from "src/database/base-entity.entity";
-import { Column, Entity, ManyToMany } from "typeorm";
+import { Vendors } from "src/vendor/vendors.entity";
+import { Column, Entity, ManyToMany, ManyToOne } from "typeorm";
 
 @Entity()
 export class Products extends BaseEntity {
@@ -27,4 +28,7 @@ export class Products extends BaseEntity {
 
     @ManyToMany(() => Categories, (categories) => categories.products)
     categories: Categories[]
+
+    @ManyToOne(() => Vendors, (vendors) => vendors.products)
+    vendor: Vendors;
 }
