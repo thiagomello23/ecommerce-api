@@ -13,6 +13,7 @@ import { RmqModule } from './rmq/rmq.module';
 import { VendorsModule } from './vendor/vendors.module';
 import { AddressModule } from './address/address.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { CategoriesModule } from './categories/categories.module';
     RmqModule,
     VendorsModule,
     AddressModule,
-    CategoriesModule
+    CategoriesModule,
+    ProductsModule
   ],
   controllers: [],
   providers: [],
