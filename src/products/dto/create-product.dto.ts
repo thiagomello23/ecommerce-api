@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsBoolean, IsDecimal, IsInt, IsNotEmpty, IsOptional, IsString, Length, Max } from "class-validator";
+import { IsArray, IsBoolean, IsDecimal, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max } from "class-validator";
 import { Categories } from "src/categories/categories.entity";
 
 export class CreateProductDto {
@@ -11,7 +11,7 @@ export class CreateProductDto {
     productName: string;
 
     @ApiProperty()
-    @IsDecimal()
+    @IsNumber({maxDecimalPlaces: 2})
     price: number;
 
     @ApiProperty()
@@ -30,6 +30,7 @@ export class CreateProductDto {
     @IsOptional()
     isActive: boolean = true;
 
+    @ApiProperty()
     @IsArray()
     categoriesId: string[];
 

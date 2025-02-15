@@ -6,7 +6,6 @@ import { AppAbility } from "src/casl/casl-ability.factory";
 import { Action } from "src/casl/enums/casl-action";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Users } from "src/users/users.entity";
-import { Public } from "src/auth/decorators/is-public.decorator";
 
 @ApiTags("products")
 @Controller("products")
@@ -19,8 +18,7 @@ export class ProductsController {
     @Post("create")
     @ApiBearerAuth()
     @ApiBody({type: CreateProductDto})
-    @Public()
-    //@CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Products"))
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Products"))
     async createProduct(
         @Body() createProductDto: CreateProductDto,
         @Req() request
