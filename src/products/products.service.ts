@@ -33,7 +33,7 @@ export class ProductsService {
             throw new UnauthorizedException("Only vendors could create products!")
         }
 
-        if(createProductDto.categoriesId.length > 5) {
+        if(createProductDto.categoriesId.length > +process.env.MAX_NUMBER_CATEGORIES) {
             throw new BadRequestException("Products couldn't have more than 5 categories!")
         }
 

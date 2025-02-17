@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req } from "@nestjs/common";
+import { Body, Controller, Param, Patch, Post, Req } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
@@ -25,5 +25,16 @@ export class ProductsController {
     ) {
         const user: Users = request.user
         return this.productsService.createProduct(createProductDto, user)
+    }
+
+    @Patch()
+    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Products"))
+    async validateProduct(
+        @Param("productId") productId: string,
+        @Req() request
+    ) {
+        const user: Users = request.user
+        console.log(productId)
+        console.log(user)
     }
 }
