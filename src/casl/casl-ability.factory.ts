@@ -1,4 +1,4 @@
-import { Ability, AbilityBuilder, AbilityClass, ExtractSubjectType, InferSubjects } from "@casl/ability";
+import { Ability, AbilityBuilder, AbilityClass, defineAbility, ExtractSubjectType, InferSubjects } from "@casl/ability";
 import { Injectable } from "@nestjs/common";
 import { Action } from "./enums/casl-action";
 import { Users } from "src/users/users.entity";
@@ -6,31 +6,54 @@ import { UserRole } from "src/roles/enums/user-role";
 
 export type Subjects = "Users" | "Validate" | "Address" | "Products" | "Category" |"all";
 
-export type AppAbility = Ability<[Action, Subjects]>;
-
 @Injectable()
 export class CaslAbilityFactory {
   createForUser(user: Users) {
-    const { can, cannot, build } = new AbilityBuilder<
-      Ability<[Action, any]>
-    >(Ability as AbilityClass<AppAbility>);
-    
-    for(const role of user.roles) {
-      // if(r.role === UserRole.ADMIN) {
-      //   can(Action.Read, "Users")
-      // }
-      // if(r.role === UserRole.USER) {
-      //   can(Action.Read, "Users")
-      // }
-      for(const permission of role.permissions) {
-        can(permission.action, permission.subject)
+    const ability = defineAbility((can) => {
+      for(const role of user.roles) {
+        for(const permission of role.permissions) {
+          if(permission?.conditions) {
+            can(
+              permission.action, 
+              permission.subject,
+              this.buildSimpleCaslConditions(permission.conditions)
+            )
+          } else {
+            can(
+              permission.action, 
+              permission.subject
+            )
+          }
+        }
       }
-    }
+    })
 
-    return build({
-      // Read https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types for details
-      detectSubjectType: (item) =>
-        item.constructor as ExtractSubjectType<any>,
-    });
+    return ability;
   }
+
+  private buildSimpleCaslConditions(conditions: any) {
+    // Caso simples
+    if (conditions.fields && conditions.matcher && conditions.value !== undefined) {
+      const field = conditions.fields[0];
+      
+      switch (conditions.matcher) {
+        case 'equals':
+          if (conditions.value === "true") return { [field]: true };
+          if (conditions.value === "false") return { [field]: false };
+          return { [field]: conditions.value };
+    
+        case 'includes':
+          return { [field]: { $in: Array.isArray(conditions.value) ? conditions.value : [conditions.value] } };
+          
+        case 'startsWith':
+          return { [field]: { $regex: `^${conditions.value}` } };
+          
+        default:
+          return { [field]: conditions.value };
+      }
+    } else {
+      return {}
+    }
+  }
+
 }

@@ -17,6 +17,22 @@ export class Permissions {
     @Column()
     subject: Subjects;
 
+    @Column({
+        type: "json",
+        nullable: true
+    })
+    conditions: {
+        fields?: string[];
+        matcher?: 'equals' | 'includes' | 'startsWith';
+        value?: any;
+        operator?: 'and' | 'or';
+        rules?: Array<{
+          field: string;
+          matcher: string;
+          value: any;
+        }>;
+    }
+
     @ManyToMany(() => Roles, (roles) => roles.permissions)
     roles: Roles[];
 }

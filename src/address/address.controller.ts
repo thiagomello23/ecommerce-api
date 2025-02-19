@@ -2,12 +2,11 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from "@nestjs/
 import { AddressService } from "./address.service";
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags, ApiUnauthorizedResponse } from "@nestjs/swagger";
 import { CreateAddressDto } from "./dto/create-address.dto";
-import { AppAbility } from "src/casl/casl-ability.factory";
-import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
 import { Action } from "src/casl/enums/casl-action";
 import { Users } from "src/users/users.entity";
 import { Address } from "./address.entity";
 import { Public } from "src/auth/decorators/is-public.decorator";
+import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
 
 @ApiTags("address")
 @Controller("address")
@@ -22,7 +21,10 @@ export class AddressController {
     @ApiBody({type: CreateAddressDto})
     @ApiResponse({status: 401, description: "Max address limit register, please remove some address to create new ones!"})
     @ApiResponse({status: 200, type: Address})
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Address"))
+    @CheckPolicies({
+        action: Action.Create,
+        subject: "Address"
+    })
     async createNewAddress(
         @Body() createAddressDto: CreateAddressDto,
         @Req() request
@@ -33,7 +35,10 @@ export class AddressController {
 
     @Get()
     @ApiBearerAuth()
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, "Address"))
+    @CheckPolicies({
+        action: Action.Read,
+        subject: "Address"
+    })
     async getAllUserAddress(
         @Req() request
     ) {
@@ -43,7 +48,10 @@ export class AddressController {
 
     @Patch("/default/:addressId")
     @ApiBearerAuth()
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Address"))
+    @CheckPolicies({
+        action: Action.Update,
+        subject: "Address"
+    })
     async makeDefaultAddress(
         @Param("addressId") addressId: string,
         @Req() request
@@ -54,7 +62,10 @@ export class AddressController {
 
     @Delete("/delete/:addressId")
     @ApiBearerAuth()
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, "Address"))
+    @CheckPolicies({
+        action: Action.Delete,
+        subject: "Address"
+    })
     async deleteAddress(
         @Param("addressId") addressId: string,
         @Req() request

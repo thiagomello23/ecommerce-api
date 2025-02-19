@@ -6,7 +6,6 @@ import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { PoliciesGuard } from "./policies.guard";
 import { CheckPolicies } from "./decorators/check-policies.decorator";
-import { AppAbility } from "src/casl/casl-ability.factory";
 import { Action } from "src/casl/enums/casl-action";
 import { EmailVerificationDto } from "./dto/email-verification.dto";
 import { ResendEmailVerification } from "./dto/resend-email-verification.dto";
@@ -56,7 +55,10 @@ export class AuthController {
     }
 
     @Post("signUpAdmin")
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Users"))
+    @CheckPolicies({
+        action: Action.Create,
+        subject: "Users"
+    })
     @ApiBearerAuth()
     @ApiBody({type: CreateUserClientDto})
     @ApiResponse({status: 400, description: "User email or phone number already beeing used;"})
@@ -129,7 +131,10 @@ export class AuthController {
     }
 
     @Post("/reset-password")
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Users"))
+    @CheckPolicies({
+        action: Action.Update,
+        subject: "Users"
+    })
     @ApiBearerAuth()
     @ApiBody({type: ResetPassword})
     @ApiResponse({status: 401, description: "Invalid JWT Token or payload!"})
@@ -143,7 +148,10 @@ export class AuthController {
     // This transforms a normal vendor user into a valid vendor user with the attribute "validVendor"
     // And this action will only be allowed by admin users
     @Post("/validate-user-vendor")
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Validate"))
+    @CheckPolicies({
+        action: Action.Update,
+        subject: "Validate"
+    })
     @ApiBearerAuth()
     @ApiBody({type: ValidateUserVendorDto})
     @ApiResponse({status: 404, description: "Invalid user id!"})
@@ -155,7 +163,10 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard, PoliciesGuard)
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, "Validate"))
+    @CheckPolicies({
+        action: Action.Read,
+        subject: "Validate"
+    })
     @ApiBearerAuth()
     @Get("validate")
     @ApiResponse({status: 401, description: "Invalid JWT Token or payload!"})

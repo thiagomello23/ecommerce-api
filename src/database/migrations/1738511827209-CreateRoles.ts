@@ -59,6 +59,7 @@ export class CreateRoles1738511827209 implements MigrationInterface {
             this.getPermission(allP, {action: Action.Read, subject: "Category"}),
             this.getPermission(allP, {action: Action.Create, subject: "Products"}),
             this.getPermission(allP, {action: Action.Read, subject: "Products"}),
+            this.getPermission(allP, {action: Action.Update, subject: "Products"}),
         ]
 
         await queryRunner.manager.save(Roles, [adminRole, clientRole, vendorRole])

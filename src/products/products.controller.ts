@@ -2,10 +2,10 @@ import { Body, Controller, Param, Patch, Post, Req } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
-import { AppAbility } from "src/casl/casl-ability.factory";
 import { Action } from "src/casl/enums/casl-action";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Users } from "src/users/users.entity";
+import { Products } from "./products.entity";
 
 @ApiTags("products")
 @Controller("products")
@@ -18,7 +18,10 @@ export class ProductsController {
     @Post("create")
     @ApiBearerAuth()
     @ApiBody({type: CreateProductDto})
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Products"))
+    @CheckPolicies({
+        action: Action.Create,
+        subject: "Products",
+    })
     async createProduct(
         @Body() createProductDto: CreateProductDto,
         @Req() request
@@ -27,14 +30,25 @@ export class ProductsController {
         return this.productsService.createProduct(createProductDto, user)
     }
 
-    @Patch()
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Products"))
-    async validateProduct(
-        @Param("productId") productId: string,
-        @Req() request
-    ) {
-        const user: Users = request.user
-        console.log(productId)
-        console.log(user)
-    }
+    // FOR NOW JUST FOR DEVELOPMENT TESTING
+    // @Patch(":productId")
+    // @CheckPolicies({
+    //     action: Action.Update,
+    //     subject: "Products",
+    //     getSubject: (context, dataSource) => {
+    //         const req = context.switchToHttp().getRequest()
+    //         const productId = req.params.productId
+    //         return dataSource.getRepository(Products).findOne({
+    //             where: {
+    //                 id: productId
+    //             }
+    //         })
+    //     }
+    // })
+    // async validateProduct(
+    //     @Param("productId") productId: string,
+    //     @Req() request
+    // ) {
+    //     const user: Users = request.user
+    // }
 }

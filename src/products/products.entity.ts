@@ -32,6 +32,11 @@ export class Products extends BaseEntity {
     @Expose()
     isActive: boolean;
 
+    @Column({
+        default: false
+    })
+    isValid: boolean;
+
     @ManyToMany(() => Categories, (categories) => categories.products)
     categories: Categories[]
 

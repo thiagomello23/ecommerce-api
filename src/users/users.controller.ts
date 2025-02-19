@@ -2,7 +2,6 @@ import { Body, Controller, Delete, ParseFilePipe, ParseFilePipeBuilder, Patch, R
 import { UsersService } from "./users.service";
 import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { Action } from "src/casl/enums/casl-action";
-import { AppAbility } from "src/casl/casl-ability.factory";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
 import { UpdateUserProfile } from "./dto/update-user-profile.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -22,7 +21,10 @@ export class UsersControllers {
     ) {}
 
     @Patch("profile")
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, "Users"))
+    @CheckPolicies({
+        action: Action.Update,
+        subject: "Users"
+    })
     @ApiBody({type: UpdateUserProfile})
     @ApiBearerAuth()
     @UseInterceptors(FileInterceptor("profilePic"))
@@ -39,7 +41,10 @@ export class UsersControllers {
     }
 
     @Delete("delete/client")
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, "Users"))
+    @CheckPolicies({
+        action: Action.Delete,
+        subject: "Users"
+    })
     @ApiBearerAuth()
     async deleteClientUser(
         @Req() request
@@ -51,7 +56,10 @@ export class UsersControllers {
     // For now is equals to a normal user delete, but forward this will have some extra
     // validations for this to work
     @Delete("delete/vendors")
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, "Users"))
+    @CheckPolicies({
+        action: Action.Delete,
+        subject: "Users"
+    })
     @ApiBearerAuth()
     async deleteVendorUser(
         @Req() request

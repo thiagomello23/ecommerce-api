@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CategoriesService } from "./categories.service";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
-import { AppAbility } from "src/casl/casl-ability.factory";
 import { Action } from "src/casl/enums/casl-action";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { Public } from "src/auth/decorators/is-public.decorator";
@@ -20,7 +19,10 @@ export class CategoriesController {
     @ApiBearerAuth()
     @ApiBody({type: CreateCategoryDto})
     @ApiResponse({status: 200, type: Categories})
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, "Category"))
+    @CheckPolicies({
+        action: Action.Create,
+        subject: "Category"
+    })
     async createCategory(
         @Body() createCategoryDto: CreateCategoryDto
     ) {
@@ -36,7 +38,10 @@ export class CategoriesController {
 
     @Delete("delete/:categoryId")
     @ApiResponse({status: 400, description: "Failed to delete a category, invalid category ID!"})
-    @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, "Category"))
+    @CheckPolicies({
+        action: Action.Delete,
+        subject: "Category"
+    })
     async deleteCategory(
         @Param("categoryId") categoryId: string
     ) {
