@@ -55,4 +55,25 @@ export class ProductsService {
 
         return this.productsRepository.save(products)
     }
+
+    async validateProduct(
+        productId: string
+    ) {
+        const existingProduct = await this.productsRepository
+            .createQueryBuilder("products")
+            .where("products.id = :productId", {productId})
+            .getOne()
+        
+        if(!existingProduct) {
+            throw new BadRequestException("Product does not exist!")
+        }
+
+        if(existingProduct.isValid) {
+            throw new BadRequestException("Product has been validated!")
+        }
+
+        existingProduct.isValid = true
+
+        return this.productsRepository.save(existingProduct)
+    }
 }

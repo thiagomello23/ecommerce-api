@@ -30,25 +30,17 @@ export class ProductsController {
         return this.productsService.createProduct(createProductDto, user)
     }
 
-    // FOR NOW JUST FOR DEVELOPMENT TESTING
-    // @Patch(":productId")
-    // @CheckPolicies({
-    //     action: Action.Update,
-    //     subject: "Products",
-    //     getSubject: (context, dataSource) => {
-    //         const req = context.switchToHttp().getRequest()
-    //         const productId = req.params.productId
-    //         return dataSource.getRepository(Products).findOne({
-    //             where: {
-    //                 id: productId
-    //             }
-    //         })
-    //     }
-    // })
-    // async validateProduct(
-    //     @Param("productId") productId: string,
-    //     @Req() request
-    // ) {
-    //     const user: Users = request.user
-    // }
+    // Just admins could validate a new product in the platform
+    @Patch("validate/:productId")
+    @CheckPolicies({
+        action: Action.Manage,
+        subject: "all"
+    })
+    async validateProduct(
+        @Param("productId") productId: string,
+        @Req() request
+    ) {
+        const user: Users = request.user
+        return this.productsService.validateProduct(productId)
+    }
 }
