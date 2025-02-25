@@ -90,6 +90,11 @@ export class CreatePermissions1738511206202 implements MigrationInterface {
             {
                 action: Action.Delete,
                 subject: "Products",
+                conditions: {
+                    fields: ["isValid"],
+                    matcher: "equals",
+                    value: true
+                }
             },
         ]
         

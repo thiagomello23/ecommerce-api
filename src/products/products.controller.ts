@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, Post, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Param, Patch, Post, Req } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
@@ -42,5 +42,27 @@ export class ProductsController {
     ) {
         const user: Users = request.user
         return this.productsService.validateProduct(productId)
+    }
+
+    @Delete("delete/:productId")
+    @CheckPolicies({
+        action: Action.Delete,
+        subject: "Products",
+        getSubject: (context, dataSource) => {
+            const request = context.switchToHttp().getRequest()
+            const productId = request.params.productId;
+            return dataSource
+                .getRepository(Products)
+                .createQueryBuilder("products")
+                .where("products.id = :productsId", {productsId: productId})
+                .getOne()
+        }
+    })
+    async disableProduct(
+        @Param("productId") productId: string,
+        @Req() request
+    ) {
+        const user: Users = request.user;
+        return this.productsService.disableProduct(productId, user)
     }
 }

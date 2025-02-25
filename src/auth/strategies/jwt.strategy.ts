@@ -30,6 +30,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, JwtStrategyName) {
                 roles: {
                     permissions: true
                 },
+                vendors: true
             }
         })
         if(!user) {

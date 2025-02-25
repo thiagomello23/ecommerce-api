@@ -76,4 +76,26 @@ export class ProductsService {
 
         return this.productsRepository.save(existingProduct)
     }
+
+    async disableProduct(
+        productId: string,
+        user: Users
+    ) {
+        const existingProduct = await this.productsRepository
+            .createQueryBuilder("products")
+            .innerJoin(Vendors, "vendor")
+            .where("products.id = :productsId", {productsId: productId})
+            .andWhere("vendor.id = :vendorId", {vendorId: user.vendors.id})
+            .getOne()
+
+        if(!existingProduct) {
+            throw new BadRequestException("Product does not exist;")
+        }
+
+        return this.productsRepository
+            .createQueryBuilder("products")
+            .softDelete()
+            .where("products.id = :productsId", {productsId: existingProduct.id})
+            .execute()
+    }
 }
