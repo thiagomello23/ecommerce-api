@@ -21,6 +21,19 @@ export class ProductsController {
     @CheckPolicies({
         action: Action.Create,
         subject: "Products",
+        getSubject: (context, dataSource) => {
+            // The way that policiesguard works is using the subject name equals to subject type
+            // But in this specific case the subject type needs vendor data, so i return a product
+            // with vendor data instead of returning the vendor.
+            const vendorDataProd = new Products();
+
+            const request = context.switchToHttp().getRequest()
+            const user: Users = request.user
+
+            vendorDataProd.vendor = user.vendors
+
+            return vendorDataProd
+        }
     })
     async createProduct(
         @Body() createProductDto: CreateProductDto,

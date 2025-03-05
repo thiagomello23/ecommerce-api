@@ -73,6 +73,11 @@ export class CreatePermissions1738511206202 implements MigrationInterface {
             {
                 action: Action.Create,
                 subject: "Products",
+                conditions: {
+                    fields: ["vendor.validVendor"],
+                    matcher: "equals",
+                    value: true
+                }
             },
             {
                 action: Action.Read,
