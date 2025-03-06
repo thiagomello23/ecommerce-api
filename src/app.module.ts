@@ -14,6 +14,8 @@ import { VendorsModule } from './vendor/vendors.module';
 import { AddressModule } from './address/address.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
+import { ProductsVariantsModule } from './products-variants/products-variants.module';
+import { ProductsFilesModule } from './products-files/products-files.module';
 
 @Module({
   imports: [
@@ -33,7 +35,9 @@ import { ProductsModule } from './products/products.module';
     VendorsModule,
     AddressModule,
     CategoriesModule,
-    ProductsModule
+    ProductsModule,
+    ProductsVariantsModule,
+    ProductsFilesModule
   ],
   controllers: [],
   providers: [],
