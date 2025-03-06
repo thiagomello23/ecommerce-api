@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Patch, Post, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
@@ -6,6 +6,7 @@ import { Action } from "src/casl/enums/casl-action";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Users } from "src/users/users.entity";
 import { Products } from "./products.entity";
+import { Public } from "src/auth/decorators/is-public.decorator";
 
 @ApiTags("products")
 @Controller("products")
@@ -78,4 +79,16 @@ export class ProductsController {
         const user: Users = request.user;
         return this.productsService.disableProduct(productId, user)
     }
+
+    // Development Only
+    @Get("/all/dev")
+    @Public()
+    async getAllProductsOfAllVendors() {
+        if(process.env.ENVIRONMENT.toString() !== "dev") {
+            return;
+        }
+
+        return this.productsService.getAllProductsOfAllVendors()
+    }
+
 }

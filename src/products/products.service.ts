@@ -98,4 +98,11 @@ export class ProductsService {
             .where("products.id = :productsId", {productsId: existingProduct.id})
             .execute()
     }
+
+    async getAllProductsOfAllVendors() {
+        return this.productsRepository
+            .createQueryBuilder("products")
+            .innerJoinAndSelect("products.vendor", "vendors")
+            .getMany()
+    }
 }
