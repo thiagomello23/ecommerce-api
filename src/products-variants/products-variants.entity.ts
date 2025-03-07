@@ -1,7 +1,8 @@
 import { Expose } from "class-transformer";
 import { BaseEntity } from "src/database/base-entity.entity";
+import { ProductsFiles } from "src/products-files/products-files.entity";
 import { Products } from "src/products/products.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 
 @Entity()
 export class ProductsVariants extends BaseEntity {
@@ -26,4 +27,7 @@ export class ProductsVariants extends BaseEntity {
 
     @ManyToOne(() => Products, (products) => products.productsVariants)
     product: Products;
+
+    @OneToMany(() => ProductsFiles, (productsFiles) => productsFiles.productVariants)
+    productsFiles: ProductsFiles[];
 }

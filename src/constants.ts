@@ -8,7 +8,8 @@ export const DatabaseRepositoryConstants = {
     addressRepository: "ADDRESS_REPOSITORY",
     categoriesRepository: "CATEGORIES_REPOSITORY",
     productsRepository: "PRODUCTS_REPOSITORY",
-    productsVariantsRepository: "PRODUCTS_VARIANTS_REPOSITORY"
+    productsVariantsRepository: "PRODUCTS_VARIANTS_REPOSITORY",
+    productsFilesRepository: "PRODUCTS_FILES_REPOSITORY"
 };
 
 export const JwtStrategyName = "JWT"
