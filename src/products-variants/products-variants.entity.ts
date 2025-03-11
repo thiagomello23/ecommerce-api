@@ -7,7 +7,9 @@ import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 @Entity()
 export class ProductsVariants extends BaseEntity {
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     @Expose()
     variantName: string;
 
@@ -24,6 +26,11 @@ export class ProductsVariants extends BaseEntity {
     })
     @Expose()
     stock: number;
+
+    @Column({
+        nullable: true
+    }) // Hexadecimal colors
+    color: string;
 
     @ManyToOne(() => Products, (products) => products.productsVariants)
     product: Products;

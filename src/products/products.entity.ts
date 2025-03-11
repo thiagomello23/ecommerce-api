@@ -12,23 +12,9 @@ export class Products extends BaseEntity {
     @Expose()
     productName: string;
 
-    @Column({
-        type: "decimal",
-        precision: 10,
-        scale: 2
-    })
-    @Expose()
-    price: number;
-
     @Column()
     @Expose()
     description: string;
-
-    @Column({
-        type: "integer"
-    })
-    @Expose()
-    stock: number;
 
     @Column()
     @Expose()
