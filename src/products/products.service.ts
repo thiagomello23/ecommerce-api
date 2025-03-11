@@ -7,6 +7,7 @@ import { Users } from "src/users/users.entity";
 import { plainToInstance } from "class-transformer";
 import { Vendors } from "src/vendor/vendors.entity";
 import { Categories } from "src/categories/categories.entity";
+import { ProductsVariants } from "src/products-variants/products-variants.entity";
 
 @Injectable()
 export class ProductsService {
@@ -18,6 +19,8 @@ export class ProductsService {
         private readonly vendorsRepository: Repository<Vendors>,
         @Inject(DatabaseRepositoryConstants.categoriesRepository)
         private readonly categoriesRepository: Repository<Categories>,
+        @Inject(DatabaseRepositoryConstants.productsVariantsRepository)
+        private readonly productsVariantsRepository: Repository<ProductsVariants>,
     ){}
 
     async createProduct(
@@ -49,11 +52,21 @@ export class ProductsService {
         }
         
         const products = plainToInstance(Products, createProductDto, {excludeExtraneousValues: true})
+        const productsVariants = plainToInstance(ProductsVariants, createProductDto, {excludeExtraneousValues: true})
+
+        productsVariants.variantName = products.productName
+
+        // For the product creation the first variant is going to be a defaultVariant
+        productsVariants.defaultVariant = true
 
         products.vendor = vendor
         products.categories = categories
 
-        return this.productsRepository.save(products)
+        await this.productsRepository.save(products)
+
+        productsVariants.product = products
+
+        return this.productsVariantsRepository.save(productsVariants)
     }
 
     async validateProduct(

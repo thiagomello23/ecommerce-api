@@ -32,6 +32,14 @@ export class ProductsVariants extends BaseEntity {
     }) // Hexadecimal colors
     color: string;
 
+    @Column({
+        default: true
+    })
+    isActive: boolean;
+
+    @Column()
+    defaultVariant: boolean;
+
     @ManyToOne(() => Products, (products) => products.productsVariants)
     product: Products;
 
