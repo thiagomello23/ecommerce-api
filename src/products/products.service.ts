@@ -1,6 +1,6 @@
 import { BadRequestException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { DatabaseRepositoryConstants } from "src/constants";
-import { Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Products } from "./products.entity";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { Users } from "src/users/users.entity";
@@ -21,6 +21,8 @@ export class ProductsService {
         private readonly categoriesRepository: Repository<Categories>,
         @Inject(DatabaseRepositoryConstants.productsVariantsRepository)
         private readonly productsVariantsRepository: Repository<ProductsVariants>,
+        @Inject(DatabaseRepositoryConstants.dataSource)
+        private readonly dataSource: DataSource,
     ){}
 
     async createProduct(
@@ -62,11 +64,26 @@ export class ProductsService {
         products.vendor = vendor
         products.categories = categories
 
-        await this.productsRepository.save(products)
+        const queryRunner = this.dataSource.createQueryRunner()
+        let productVariantReturn: ProductsVariants;
 
-        productsVariants.product = products
+        try {
+            await queryRunner.connect()
+            await queryRunner.startTransaction()
 
-        return this.productsVariantsRepository.save(productsVariants)
+            await queryRunner.manager.save(Products, products)
+            productsVariants.product = products
+            productVariantReturn = await queryRunner.manager.save(ProductsVariants, productsVariants)
+
+            await queryRunner.commitTransaction()
+        } catch(err) {
+            await queryRunner.rollbackTransaction()
+            throw err;
+        } finally {
+            await queryRunner.release()
+        }
+
+        return productVariantReturn
     }
 
     async validateProduct(

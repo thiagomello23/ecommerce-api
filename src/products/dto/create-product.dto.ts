@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsBoolean, IsDecimal, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max } from "class-validator";
+import { IsArray, IsBoolean, IsDecimal, IsHexColor, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max } from "class-validator";
 import { Categories } from "src/categories/categories.entity";
 
 export class CreateProductDto {
@@ -33,6 +33,10 @@ export class CreateProductDto {
     @ApiProperty()
     @IsArray()
     categoriesId: string[];
+
+    @ApiProperty()
+    @IsHexColor()
+    color: string;
 
     // Vendor data will go along with the JWT Token, so there's no need to get here
 }

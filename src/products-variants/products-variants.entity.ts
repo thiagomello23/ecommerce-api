@@ -30,6 +30,7 @@ export class ProductsVariants extends BaseEntity {
     @Column({
         nullable: true
     }) // Hexadecimal colors
+    @Expose()
     color: string;
 
     @Column({
