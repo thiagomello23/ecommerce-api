@@ -11,6 +11,9 @@ export class ProductsVariants extends BaseEntity {
         nullable: true
     })
     @Expose()
+    // This will only be shown for vendors to identify their variants
+    // By default the creation of a new product will use the same product name for the variant name
+    // And the first variant created with the product will be the default variant
     variantName: string;
 
     @Column({
@@ -38,7 +41,9 @@ export class ProductsVariants extends BaseEntity {
     })
     isActive: boolean;
 
-    @Column()
+    @Column({
+        default: false
+    })
     defaultVariant: boolean;
 
     @ManyToOne(() => Products, (products) => products.productsVariants)

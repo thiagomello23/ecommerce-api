@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsBoolean, IsDecimal, IsHexColor, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max } from "class-validator";
+import { IsArray, IsBoolean, IsDecimal, IsHexColor, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Max, MaxLength } from "class-validator";
 import { Categories } from "src/categories/categories.entity";
 
 export class CreateProductDto {
@@ -7,7 +7,7 @@ export class CreateProductDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    @Length(20, 200)
+    @Length(10, 200)
     productName: string;
 
     @ApiProperty()
@@ -35,6 +35,7 @@ export class CreateProductDto {
     categoriesId: string[];
 
     @ApiProperty()
+    @IsOptional()
     @IsHexColor()
     color: string;
 

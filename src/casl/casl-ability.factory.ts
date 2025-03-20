@@ -4,7 +4,7 @@ import { Action } from "./enums/casl-action";
 import { Users } from "src/users/users.entity";
 import { UserRole } from "src/roles/enums/user-role";
 
-export type Subjects = "Users" | "Validate" | "Address" | "Products" | "Category" |"all";
+export type Subjects = "Users" | "Validate" | "Address" | "Products" | "Category" | "all" | "ProductsVariants";
 
 @Injectable()
 export class CaslAbilityFactory {
