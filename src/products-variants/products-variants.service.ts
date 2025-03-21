@@ -6,6 +6,7 @@ import { CreateProductVariantDto } from "./dto/create-product-variant.dto";
 import { Users } from "src/users/users.entity";
 import { Products } from "src/products/products.entity";
 import { plainToInstance } from "class-transformer";
+import { UpdateProductVariantDto } from "./dto/update-product-variant.dto";
 
 @Injectable()
 export class ProductsVariantsService {
@@ -40,6 +41,26 @@ export class ProductsVariantsService {
         newVariant.product = product
 
         return this.productsVariantsRepository.save(newVariant)
+    }
+
+    async updateVariant(
+        updateProductVariants: UpdateProductVariantDto
+    ) {
+        const productVariant= await this.productsVariantsRepository
+            .createQueryBuilder("productsVariants")
+            .innerJoin("productsVariants.product", "products")
+            .where("productsVariants.id = :productVariantId", {productVariantId: updateProductVariants.productVariantId})
+            .andWhere("products.vendorId = :vendorId", {vendorId: updateProductVariants.user.vendors.id})
+            .getOne()
+
+        delete updateProductVariants.productVariantId
+        delete updateProductVariants.user
+
+        for (const [key, value] of Object.entries(updateProductVariants)) {
+            productVariant[key] = value
+        }
+
+        return this.productsVariantsRepository.save(productVariant)
     }
 
     async getAllVariantsWithinAProduct(

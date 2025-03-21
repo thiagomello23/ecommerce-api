@@ -7,6 +7,7 @@ import { Users } from "src/users/users.entity";
 import { CheckPolicies } from "src/auth/decorators/check-policies.decorator";
 import { Action } from "src/casl/enums/casl-action";
 import { ProductsVariants } from "./products-variants.entity";
+import { UpdateProductVariantDto } from "./dto/update-product-variant.dto";
 
 @ApiTags("products-variants")
 @Controller("products-variants")
@@ -44,8 +45,18 @@ export class ProductsVariantsController {
     }
 
     @Patch("update/:productVariantId")
-    async updateVariant() {
-
+    @CheckPolicies({
+        action: Action.Update,
+        subject: "ProductsVariants"
+    })
+    async updateVariant(
+        @Param("productVariantId") productVariantId: string,
+        @Body() updateProductVariants: UpdateProductVariantDto,
+        @Req() request
+    ) {
+        updateProductVariants.productVariantId = productVariantId
+        updateProductVariants.user = request.user as Users
+        return this.productsVariantsService.updateVariant(updateProductVariants)
     }
 
     @Delete("delete/:productVariantId")
