@@ -19,16 +19,7 @@ export class ProductsVariantsController {
     @Post("create")
     @CheckPolicies({
         action: Action.Create,
-        subject: "ProductsVariants",
-        getSubject: (context, dataSource) => {
-            const requestBody = context.switchToHttp().getRequest().body
-
-            return dataSource.manager
-                .getRepository(ProductsVariants)
-                .createQueryBuilder("productsVariants")
-                .where("products.id = :productId", {productId: requestBody.productId})
-                .getOne()
-        },
+        subject: "ProductsVariants"
     })
     async createProductsVariantsForExistingProduct(
         @Body() createProductVariantDto: CreateProductVariantDto,
@@ -40,7 +31,7 @@ export class ProductsVariantsController {
 
     @Get("variants/:productId")
     async getAllVariantsWithinAProduct() {
-
+        
     }
 
     @Patch("update/:productVariantId")

@@ -23,6 +23,7 @@ export class ProductsVariantsService {
     ) {
         const product = await this.productsRepository
             .createQueryBuilder("products")
+            .innerJoinAndSelect("products.productsVariants", "productsVariants", "productsVariants.productId = products.id")
             .where("products.id = :productId", {productId: createProductVariantDto.productId})
             .andWhere("products.vendorId = :vendorId", {vendorId: user.vendors.id})
             .getOne()
@@ -31,9 +32,9 @@ export class ProductsVariantsService {
             throw new NotFoundException("Product not found!")
         }
 
-        // if(numberOfProducts > +process.env.MAX_NUMBER_PRODUCTS_VARIANTS) {
-        //     throw new UnauthorizedException(`You reach the maximum number of variants in the same product. (max: ${process.env.MAX_NUMBER_PRODUCTS_VARIANTS})`)
-        // }
+        if(product.productsVariants.length > +process.env.MAX_NUMBER_PRODUCTS_VARIANTS) {
+            throw new UnauthorizedException(`You reach the maximum number of product variants to the same product. (max: ${process.env.MAX_NUMBER_PRODUCTS_VARIANTS})`)
+        }
 
         const newVariant = plainToInstance(ProductsVariants, createProductVariantDto, {excludeExtraneousValues: true})
         newVariant.product = product
