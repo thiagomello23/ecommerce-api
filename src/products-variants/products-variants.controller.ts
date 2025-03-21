@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ProductsVariantsService } from "./products-variants.service";
 import { CreateProductVariantDto } from "./dto/create-product-variant.dto";
@@ -30,8 +30,17 @@ export class ProductsVariantsController {
     }
 
     @Get("variants/:productId")
-    async getAllVariantsWithinAProduct() {
-        
+    @CheckPolicies({
+        action: Action.Read,
+        subject: "ProductsVariants"
+    })
+    // This return more informations about the product, and return inactive products
+    async getAllVariantsWithinAProduct(
+        @Param("productId") productId: string,
+        @Req() request
+    ) {
+        const user: Users = request.user
+        return this.productsVariantsService.getAllVariantsWithinAProduct(productId, user)
     }
 
     @Patch("update/:productVariantId")

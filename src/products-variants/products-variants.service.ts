@@ -41,4 +41,18 @@ export class ProductsVariantsService {
 
         return this.productsVariantsRepository.save(newVariant)
     }
+
+    async getAllVariantsWithinAProduct(
+        productId: string,
+        user: Users
+    ) {
+        const productVariants = await this.productsVariantsRepository
+            .createQueryBuilder("productsVariants")
+            .innerJoin("productsVariants.product", "products")
+            .where("products.id = :productId", {productId})
+            .andWhere("products.vendorId = :vendorId", {vendorId: user.vendors.id})
+            .getMany()
+
+        return productVariants
+    }
 }
