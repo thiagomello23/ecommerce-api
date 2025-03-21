@@ -55,4 +55,22 @@ export class ProductsVariantsService {
 
         return productVariants
     }
+
+    async deleteVariant(
+        productVariantId: string,
+        user: Users
+    ) {
+        const productVariant= await this.productsVariantsRepository
+            .createQueryBuilder("productsVariants")
+            .innerJoin("productsVariants.product", "products")
+            .where("productsVariants.id = :productVariantId", {productVariantId})
+            .andWhere("products.vendorId = :vendorId", {vendorId: user.vendors.id})
+            .getOne()
+
+        if(!productVariant) {
+            throw new NotFoundException("Product variant not found!")
+        }
+
+        return this.productsVariantsRepository.softDelete(productVariant.id)
+    }
 }

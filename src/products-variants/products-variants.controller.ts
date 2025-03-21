@@ -49,7 +49,15 @@ export class ProductsVariantsController {
     }
 
     @Delete("delete/:productVariantId")
-    async deleteVariant() {
-
+    @CheckPolicies({
+        action: Action.Delete,
+        subject: "ProductsVariants"
+    })
+    async deleteVariant(
+        @Param("productVariantId") productVariantId: string,
+        @Req() request
+    ) {
+        const user: Users = request.user
+        return this.productsVariantsService.deleteVariant(productVariantId, user)
     }
 }
